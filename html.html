@@ -1,37 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bottom Border with Content at Bottom Right</title>
+<style>
+    .container {
+        position: relative;
+        border-bottom: 2px solid black; /* Add bottom border */
+        padding: 10px;
     }
 
-    .top-div, .bottom-div {
-      flex: 1;
-      background-color: #3498db; /* Blue background color for demonstration */
+    .content {
+        position: absolute;
+        bottom: 0;
+        right: 0;
     }
-
-    .centered-div {
-      flex: 0; /* Don't grow or shrink, so it stays centered */
-      z-index: 2;
-      background-color: #e74c3c; /* Red background color for demonstration */
-      padding: 20px;
-      text-align: center;
-    }
-  </style>
+</style>
 </head>
 <body>
-  <div class="top-div"></div>
-  <div class="centered-div">
-    <!-- Your content goes here -->
-    <h1>Centered Content</h1>
-  </div>
-  <div class="bottom-div"></div>
+
+<div class="container">
+    <!-- Content of the div -->
+    This is the content of the div.
+    <div class="content">
+        Content at bottom right
+    </div>
+</div>
+
 </body>
 </html>
