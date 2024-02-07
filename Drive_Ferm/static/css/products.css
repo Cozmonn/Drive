@@ -204,7 +204,8 @@
   }
   .filter-bar{
     display: grid;
-    top: 15%;
+    position: relative;
+    top: 5%;
   }
   body.ui-slider-active {
     cursor: grabbing;
