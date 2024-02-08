@@ -14,16 +14,15 @@ class User(models.Model):
     registration_date = models.DateTimeField(auto_now_add=True)
     last_login_date = models.DateTimeField(null=True, blank=True)
 
-class Category(models.Model):
-    category_name = models.CharField(max_length=100)
-    parent_category = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+class Drive(models.Model):
+    Drive_name = models.CharField(max_length=100)
 
 class Product(models.Model):
     product_name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity_in_stock = models.PositiveIntegerField()
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    Drive_name = models.ForeignKey(Drive, on_delete=models.CASCADE)
     image_url = models.URLField()
 
 class Order(models.Model):
