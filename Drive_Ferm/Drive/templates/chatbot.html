@@ -7,238 +7,110 @@
     <title>ChatBot</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Option 1: Include in HTML -->
+    <link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+    rel="stylesheet"
+/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="../../static/css/chatbot.css">
+
+
 </head>
+<style>
+    .exit{
+    position: absolute;
+    left: 85%;
+    top: 30%;
+    font-size: 14px;
+    }
+    .ixon{
+        font-size: 1.5em;
+    }
+    #firstDiv {
+        bottom: 0%;
+        width: 43px;
+    align-items: center;
+    justify-items: center;
+    height: 43px;
+    background-color: #6c757d;
+    border-radius: 100%;
+    /* padding: 9px; */
+    position: absolute;
+    /* top: 50%; */
+    right: 0%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    display: grid;
+    transition: all 0.5s ease; /* Smooth transition */
+
+}
+</style>
 
 <body>
-    <div id="center-text">
-        <h2>Personal Assistant</h2>
-    </div>
-    <div id="body">
-
-
-        <!--button-->
-        <div id="chat-circle" class="btn btn-raised">
-            <div id="chat-overlay"></div>
-            <!--<i class="material-icons">android</i>-->
-            <img class="chat-circle_robot" src="https://cdn.iconscout.com/icon/free/png-256/robot-86-404724.png">
-        </div>
-
-        <!--chat-bot-->
-        <div class="chat-box">
-            <div class="chat-box-body">
-                <!--welcome message-->
-                <div class="chat-box-welcome__header">
-                    <div class="chat-box__header-text">
-                        <p3 class="chat-box-welcome__company-name">ChatBot</p3>
-                        <span class="chat-box-toggle"><i class="material-icons">cancel</i></span>
-                    </div>
-
-                    <div id="chat-box-welcome__ava">
-                        <!--<i class="material-icons">android</i>-->
-                        <img class="chat-box-welcome_robot" src="https://cdn.iconscout.com/icon/free/png-256/robot-86-404724.png">
-                    </div>
-                    <div class="chat-box-welcome__welcome-text">
-                        <p>Hi! I'm ChatBot IDA, what can I assist you with?</p>
-                    </div>
-                    <!--<div id="chat">
-
-                    </div>-->
-                </div>
-
-
-
-
-                <!--chat-bot after welcome was toggled-->
-                <div id="chat-box__wraper">
-                    <div class="chat-box-header">
-                        ChatBot
-                        <span class="chat-box-toggle"><i class="material-icons">cancel</i></span>
-                    </div>
-
-
-
-                    <div class="chat-box-overlay">
-                    </div>
-                    <div class="chat-logs">
-                        <div id="cm-msg-0" class="chat-msg bot">
-                            <span class="msg-avatar">
-                       <!--<i class="material-icons">android</i>-->
-                       <img class="chat-box-overlay_robot" src="https://cdn.iconscout.com/icon/free/png-256/robot-86-404724.png">          
-                       </span>
-                            <div class="cm-msg-text">
-                                Hi! I'm ChatBot IDA, what can I assist you with?
-                            </div>
-                        </div>
-                        <!--<div class="text-center"><p>loader 1</p><div class="loader1"></div></div>-->
-                        <div class="spin-container">
-                            <div class="spiner">
-                                <div aria-hidden="true"></div>
-                                <div aria-hidden="true"></div>
-                                <div aria-hidden="true"></div>
-                            </div>
-                        </div>
-
-
-
-                    </div>
-                    <!--chat-log-->
-                </div>
-
-            </div>
-            <div class="chat-input-box" id="chatLog">
-                <form class="chat-input__form">
-                   <input type="text" class="chat-input__text" id="chat-input__text" placeholder="Send a message..." /> 
-                    <button type="submit" class="chat-submit" id="chat-submit">
-                      <i class="material-icons">send</i>
-                  </button>
-                </form>
-                <p6 class="chat-box__sign">powered by deepPiXEL</p6>
+    <div ID="firstDiv">
+        <i class="ri-robot-3-line ixon"></i>
+      </div>
+    <div class="chat" id="chat">
+        <div class="chat-title">
+          <h1>AJINKYA DALVI</h1>
+          <h2>@AJINKYA3D</h2>
+          <figure class="avatar">
+            <img src="https://s22908.pcdn.co/wp-content/uploads/2022/02/what-are-bots.jpg" /></img>
+          </figure>
+            <div class="exit">
+                <button type="button" class="btn-close" id="exitBtn" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
         </div>
-    </div>
+        <div class="messages">
+          <div class="messages-content"></div>
+        </div>
+        <div class="message-box">
+          <textarea type="text" class="message-input" placeholder="Type message here..."></textarea>
+          <button type="submit" class="message-submit">Send</button>
+        </div>
+      
+      </div>
+      <div class="btn">
+      </div>
+      <div class="bg"></div>
     <!-- end live-chat -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!--jquery ui-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>    <!--jquery ui-->
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.3/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="../../static/js/chatbot.js"></script>
+
+
     <script>
-        var botController = (function () {
-  
+        document.addEventListener('DOMContentLoaded', function() {
+        var firstDiv = document.getElementById('firstDiv');
+        var secondDiv = document.getElementById('chat');
+        var exitbtn = document.getElementById('exitBtn');
 
-})();
+        // Event listener for clicking the first div
+        firstDiv.addEventListener('click', function() {
+            // Show the second div
+            secondDiv.style.display = 'flex';
+            // Hide the first div
 
-var uiController = (function () {
-
-
-})();
-
-
-
-
-var controller = (function (botCntr, uiCntr) {
-    var $chatCircle,
-        $chatBox,
-        $chatBoxClose,
-        $chatBoxWelcome,
-        $chatWraper,
-        $submitBtn,
-        $chatInput,
-        $msg;
-
-    /*toggle*/
-    function hideCircle(evt) {
-        evt.preventDefault();
-        $chatCircle.hide('scale');
-        $chatBox.show('scale');
-        $chatBoxWelcome.show('scale');
-    }
-
-    function chatBoxCl(evt) {
-        evt.preventDefault();
-        $chatCircle.show('scale');
-        $chatBox.hide('scale');
-        $chatBoxWelcome.hide('scale');
-        $chatWraper.hide('scale');
-    }
-
-    function chatOpenMessage(evt) {
-        evt.preventDefault();
-        $chatBoxWelcome.hide();
-        $chatWraper.show();
-    }
-
-    //generate messages on submit click
-    function submitMsg(evt) {
-        evt.preventDefault();
-
-        //1. get input message data
-        msg = $chatSubmitBtn.val();
-
-        //2.if there is no string button send shoudn't work
-        if (msg.trim() == '') {
-            return false;
-        }
-        //3. add message to bot controller
-        callbot(msg);
-        //4. display message to ui controller
-        generate_message(msg, 'self');
-
-    }
-
-    function chatSbmBtn(evt) {
-        if (evt.keyCode === 13 || evt.which === 13) {
-            console.log("btn pushed");
-        }
-    }
-    /* var input = uiCntr.getInput();*/
-    /* $chatSubmitBtn.on("click", hideCircle);*/
+            firstDiv.style.opacity = 0;
+        });
 
 
-
-    function init() {
-        $chatCircle = $("#chat-circle");
-        $chatBox = $(".chat-box");
-        $chatBoxClose = $(".chat-box-toggle");
-        $chatBoxWelcome = $(".chat-box-welcome__header");
-        $chatWraper = $("#chat-box__wraper");
-        $chatInput = $("#chat-input__text");
-        $submitBtn = $("#chat-submit");
-
-        //1. call toggle 
-        $chatCircle.on("click", hideCircle);
-        $chatBoxClose.on("click", chatBoxCl);
-        $chatInput.on("click", chatOpenMessage);
-
-        //2. call wait message from CRM-human
-
-        $submitBtn.on("click", chatSbmBtn);
-        $chatInput.on("keypress", chatSbmBtn);
-
-
-        //6. get message from bot controller-back end
-        //7. display bot message to ui controller
-    }
-
-    return {
-        init: init
-    };
-
-})(botController, uiController);
-
-
-$('.chat-input__form').on('submit', function (e) {
-    e.preventDefault();
-  msg = $('.chat-input__text').val();
-  
-  $('.chat-logs').append('<div id="cm-msg-0" class="chat-msg background-warning push-right bot"><div class="cm-msg-text">' + msg + '</div><span class="msg-avatar"><img class="chat-box-overlay_robot" src="https://www.meetsource.com//userStyles/images/user.png"></span></div>');  
-  $('.chat-input__text').val('');
-});
-
-
-$(document).ready(controller.init);
-
-    know = {
-      "hello" : "hi",
-      "how are you?" : "good",
-      "ok" : ":)"
-    };
-    function talk() {
-      var user = document.getElementById("userBox").value;
-      document.getElementById("userBox").value = "";
-      document.getElementById("chatLog").innerHTML += user+"<br>";
-      if (user in know) {
-        document.getElementById("chatLog").innerHTML += know[user]+"<br>";
-      } 
-      else {
-        document.getElementById("chatLog").innerHTML += "I don't understand...<br>";
-      }
-    } 
-
+        // Event listener for clicking the first div
+        exitbtn.addEventListener('click', function() {
+            // Show the second div
+            firstDiv.style.opacity = 1;
+            // Hide the first div
+            secondDiv.style.display = 'none';
+        });
+    });
+    
     </script>
-    <!--<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>-->
-
-<!--     <script src="app.js"></script> -->
-
 </body>
 
 </html>
