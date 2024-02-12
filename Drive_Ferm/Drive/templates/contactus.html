@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&family=Montserrat:wght@200;300;400&family=Playfair+Display:wght@400;500;600;700&display=swap');
+*, :before, :after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+input, button, textarea {
+  border: none;
+  background: transparent;
+}
+input[type='submit'] {
+  cursor: pointer;
+}
+input:focus, textarea:focus {
+  outline: none;
+}
+body {
+  background-color: #1A1C1E;
+}
+.container-sm {
+  position: relative;
+  padding: 0 120px;
+  height: 100%;
+}
+.lightcolor, .lightcolor a {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-family: 'Comfortaa', cursive;
+}
+.contact-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: space-evenly;
+}
+.contact-page > * {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  position: relative;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.form-box {
+  position: relative;
+}
+.form-box .form-head {
+  width: 100%;
+  padding: 30px 0;
+  max-width: 30rem;
+  text-align: right;
+}
+.form-box .form-head .form-title {
+  margin: 0;
+  font-size: 3.8rem;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Playfair Display', serif;
+}
+.form-box .form-info {
+  margin-bottom: 3rem;
+}
+.form-box form {
+  padding: 3rem 0;
+  max-width: 30rem;
+}
+.form-box form .input-box {
+  position: relative;
+  margin-bottom: 25px;
+}
+.form-box form .input-box textarea {
+  max-width: 100%;
+  min-width: 100%;
+  min-height: 35px;
+  max-height: 7rem;
+  font-family: inherit;
+  transition: 0.5s;
+  resize: none;
+}
+.form-box form .input-box textarea:focus, .form-box form .input-box textarea:valid {
+  height: 5rem;
+}
+.form-box form .input-box .highliterbox {
+  width: 100%;
+  height: 35px;
+  padding: 5px 0;
+  background: transparent;
+  color: white;
+  font-family: arial;
+  font-size: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+.form-box form .input-box .highliterbox:focus ~ label, .form-box form .input-box .highliterbox:valid ~ label {
+  top: -20px;
+  font-size: 13px;
+  transition: 0.5s;
+  color: rgba(255, 255, 255, 0.7);
+}
+.form-box form .input-box .highliterbox:focus {
+  border-bottom: 1px solid transparent;
+}
+.form-box form .input-box .highliterbox:focus ~ .bar:before, .form-box form .input-box .highliterbox:focus ~ .bar:after {
+  width: 50%;
+}
+.form-box form .input-box label {
+  position: absolute;
+  padding: 10px 0;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  transition: 0.5s;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Comfortaa', cursive;
+}
+.form-box form .input-box .bar {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+.form-box form .input-box .bar::before, .form-box form .input-box .bar::after {
+  content: '';
+  height: 1.5px;
+  width: 0px;
+  bottom: 1px;
+  position: absolute;
+  transition: 0.2s ease all;
+  background: rgba(255, 255, 255, 0.7);
+}
+.form-box form .input-box .bar::before {
+  left: 50%;
+}
+.form-box form .input-box .bar::after {
+  right: 50%;
+}
+.form-box form .btn {
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s;
+  padding: 15px 20px;
+  font-weight: bold;
+  color: white;
+  background: rgba(255, 255, 255, 0.3);
+  font-family: 'Comfortaa', cursive;
+}
+.form-box form .btn:hover {
+  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.7);
+}
+.form-box .line {
+  position: absolute;
+  bottom: 2.5rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  width: 100%;
+}
+.social-box .social-item {
+  width: 100%;
+  line-height: 1.5;
+  padding-left: 4rem;
+  margin-bottom: 2rem;
+}
+.social-box .social-item span.social-title {
+  opacity: 0.5;
+  display: block;
+  line-height: 3;
+  font-weight: bold;
+}
+.social-box .social-item a.social-title {
+  font-weight: 500;
+  opacity: 0.5;
+  transition: 0.4s;
+  margin-right: 20px;
+}
+.social-box .social-item a.social-title:hover {
+  opacity: 0.7;
+}
+.social-box .social-foot {
+  align-self: center;
+  position: absolute;
+  bottom: 0;
+}
+@media only screen and (max-width: 992px) {
+  .container-sm {
+    padding: 0 80px;
+    transition: 0.4s;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .container-sm {
+    padding: 0 40px;
+    transition: 0.4s;
+  }
+  .contact-page {
+    flex-direction: column;
+  }
+  .contact-page > * {
+    min-height: unset;
+  }
+  .form-title {
+    font-size: 10vw !important;
+  }
+  .social-box .social-item {
+    padding-left: unset;
+  }
+  .social-foot {
+    position: relative !important;
+  }
+}
+@media only screen and (max-width: 576px) {
+  .container-sm {
+    padding: 0 20px;
+    transition: 0.4s;
+  }
+}
+.map_bind{
+   margin-top: 50px;
+    border-radius: 30px;
+    overflow: hidden;
+}
+    </style>
+</head>
+<body>
+    <div class="container-sm">
+        <div class="contact-page">
+            <div class="form-box">
+                <div class="form-head">
+                    <span class="lightcolor">Takıma merhaba de</span>
+                    <h2 class="form-title">Bize Ulaşın</h2>
+                </div>
+                
+                <form action="#" method="POST">
+                    <div class="lightcolor form-info">bizimle iletişime geçmekten çekinmeyin, mümkün olan en kısa sürede size geri döneceğiz.</div>
+                    <div class="input-box">
+                        <input type="text" name="name" class="highliterbox" autocomplete="off" required>
+                        <label for="name">ad soyad</label>
+                        <span class="bar"></span>
+                    </div>
+                    <div class="input-box">
+                        <input type="email" name="email" class="highliterbox" autocomplete="off" required>
+                        <label for="email">eposta</label>
+                        <span class="bar"></span>
+                    </div>
+                    <div class="input-box">
+                        <textarea name="text" class="highliterbox" autocomplete="off" required></textarea>
+                        <label for="text">söylemek istedikleriniz</label>
+                        <span class="bar"></span>
+                    </div>
+                    <input class="btn" type="submit" value="Gönder">
+                </form>
+                <span class="line"></span>
+            </div>
+
+            <div class="social-box lightcolor">
+                <div class="social-item">
+                    <span class="social-title">açık saatler</span>
+                    Pazartesi - Cuma <br>
+                    9:00 - 18:00
+                </div>
+                <div class="social-item">
+                    <span class="social-title">adres</span>
+                    Göktürk Merkez, Ateş Sk. No:3, 34077 Eyüpsultan/İstanbul
+                </div>
+                <div class="social-item">
+                    <span class="social-title">destek</span>
+                    <a href="mailto:surasargut@gmail.com">surasargut@gmail.com</a><br>
+                    <a href="tel:08500000000">0850 000 01 02</a>
+                </div>
+                <div class="social-item social-foot">
+                    <a href="https://www.twitter.com/surasargut" target="_blank" class="social-title">twitter</a>
+                    <a href="#" class="social-title">facebook</a>
+                    <a href="https://instagram.com/surasargut" target="_blank" class="social-title">instagram</a>
+                    <a href="https://www.youtube.com/channel/UCe8g9r5B3zuQRy1a_lYC9pg" target="_blank" class="social-title">youtube</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="maps">
+            <div class="map_bind">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d471220.5631094339!2d88.04952462217592!3d22.6757520733225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f882db4908f667%3A0x43e330e68f6c2cbc!2sKolkata%2C%20West%20Bengal!5e0!3m2!1sen!2sin!4v1596988408134!5m2!1sen!2sin" width="100%" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
