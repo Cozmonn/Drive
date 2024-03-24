@@ -13,8 +13,24 @@ class UserAuth(AbstractUser):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     # Uncomment and use the below line if you decide to use profile images
-    # profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
-    
+    profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
+        # Overriding the groups and user_permissions fields to set a new related_name
+    groups = models.ManyToManyField(
+        'auth.Group',
+        verbose_name='groups',
+        blank=True,
+        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+        related_name="userauth_groups",  # Unique related name
+        related_query_name="userauth",
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        verbose_name='user permissions',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        related_name="userauth_user_permissions",  # Unique related name
+        related_query_name="userauth",
+    )
     class Meta:
         verbose_name_plural = "UserAuths"
 
@@ -22,7 +38,8 @@ class Customer(UserAuth):
     shipping_address = models.TextField()
     registration_date = models.DateTimeField(auto_now_add=True)
     last_login_date = models.DateTimeField(null=True, blank=True)
-
+    class Meta:
+        verbose_name_plural = "Customer"
     # No need to redefine uuid or username since they're inherited from UserAuth
 
 class Business(UserAuth):
@@ -33,6 +50,9 @@ class Business(UserAuth):
     # business_email = models.EmailField(unique=True)
     business_phone_number = models.CharField(max_length=20)
 
+    class Meta:
+        verbose_name_plural = "Business"
+    
     def __str__(self):
         return self.business_name
 

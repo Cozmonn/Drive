@@ -6,11 +6,13 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.core.exceptions import ValidationError
 
+from Drive.models import UserAuth
+
 class SignInForm(UserCreationForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class':'form-control'}))
 
     class Meta:
-        model = User 
+        model = UserAuth
         fields = ['email', 'username', 'password1', 'password2']
     
     def __init__(self, *args, **kwargs):
@@ -22,7 +24,7 @@ class SignInForm(UserCreationForm):
     
     def clean_email(self):
         email = self.cleaned_data['email']
-        if User.objects.filter(email=email).exists():
+        if UserAuth.objects.filter(email=email).exists():
             raise forms.ValidationError('Email already exists!')
         return email
 
@@ -33,7 +35,7 @@ class EditProfileForm(UserChangeForm):
     last_name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
 
     class Meta:
-        model = User
+        model = UserAuth
         fields = (
             'email',
             'first_name',

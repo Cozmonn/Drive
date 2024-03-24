@@ -8,7 +8,7 @@
     width: auto;
 }
 .wop{
-    min-width: 500px;
+    min-width: 50%;
     min-height: 600px;
     box-shadow: 0 1.25em 1em -.5em #0005;
 }
@@ -19,7 +19,7 @@
     background-size: cover;
     background-position: center;
     height: 600px;
-    width: 523px;
+    width: 100%;
 }
 .bg{
     position: absolute;
@@ -30,7 +30,7 @@
 .pow{
     background-color: #FFEDDB;
     box-shadow: 0 1.25em 1em -.5em #0005;
-    min-width: 700px;
+    min-width: 50%;
     min-height: 600px;
 
 }

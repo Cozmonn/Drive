@@ -39,22 +39,16 @@ from .form import SignInForm, EditProfileForm
 def logform(request):
     if request.method=='POST':
         username = request.POST['username']
+        print(request.POST['username'])
         password = request.POST['password']
-        user = auth.authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if request.GET.get('next', None):
-                return HttpResponseRedirect(request.GET['next'])
-            messages.success(request,("Successfully Logged In"))
-            return redirect('dash')
-        else:
-            # Return an 'invalid login' error message.
-            messages.warning(request, ("There was an error Logging In, Please try again!"))
-            #return redirect(request, contactus)
+        print(request.POST['password'])
+        user = authenticate(request, username=username, password=password)
+        print('logged in')
+        login(request, user)
+        print('logged in')
+        return redirect('profile')
     else:
         return render(request, 'login.html')
-    return render(request, 'login.html')
-
 
 #sign_up_view
 def register_user(request):
@@ -67,12 +61,12 @@ def register_user(request):
             user = authenticate(username=username, password=password)
             login(request, user)
             messages.warning(request,("Please complete ur signing up"))
-            return redirect('dash')
+            return redirect('profile')
         else:
             messages.warning(request,("There was an error Logging In, Please try again!"))
     else:
         form=SignInForm()
-    return render(request, 'sig.html', {
+    return render(request, 'signup.html', {
             'form':form,
     })
 
@@ -81,3 +75,15 @@ def logoutt(request):
     logout(request)
     messages.success(request, ("Logging Out Successfully"))
     return redirect('login')
+
+
+
+from django.shortcuts import render
+from .models import UserAuth
+
+def profile_view(request):
+    print(request.user)
+    profile = UserAuth.objects.get(username=request.user)
+    print(profile.profile_image.url)
+    context = {'profile': profile}
+    return render(request, 'client-view.html', context)
