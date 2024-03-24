@@ -10,7 +10,13 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
     <title>sign Up</title>
     <style>
-      
+      #mydiv{
+        background-image: url('./csm_Ferme_pedagogique_des_Dagueys_5780_8402bfb1db.jpg');
+        z-index: 99;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+      }
     </style>
 </head>
 <body>
@@ -28,7 +34,9 @@
               {%csrf_token%}
               <div class="form-group">
                 <h2>
-                  <a class="navbar-brand" href="{% url '  home' %}"><img src="../static/background/location.png" alt="">&nbsp;&nbsp;Welcome to Marry-J</a>
+                  <a class="navbar-brand" href="{% url '  home' %}"><img src="../static/background/location.png" alt="">
+                    <img src="./Logo.png" alt="" width="50%">
+                  </a>
                 </h2>
               </div>
               <br>

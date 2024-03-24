@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Responsive Filter and Products Layout</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    .container {
+  display: flex;
+  flex-direction: row;
+}
+
+.filter-bar {
+  flex: 1;
+  /* Adjust width as needed */
+  width: 200px; /* Example width */
+  height: 100vh; /* Full viewport height */
+  overflow-y: auto; /* Make vertical scrollable if content overflows */
+}
+
+.products {
+  flex: 3;
+  /* Adjust width as needed, or leave flexible */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .filter-bar {
+    height: auto;
+    width: 100%; /* Full width */
+    overflow-x: scroll; /* Make horizontal scrollable */
+    white-space: nowrap; /* Keep filter options in one line */
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="filter-bar">
+    <!-- Filter options here -->
+    Filter Options
+  </div>
+  <div class="products">
+    <!-- Products here -->
+    Products
+  </div>
+</div>
+
+</body>
+</html>

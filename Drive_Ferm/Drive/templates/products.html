@@ -10,6 +10,44 @@
 />
     <title>Document</title>
 </head>
+<style>
+  /* When the window width is 600 pixels or less */
+  .product-listing{
+    display: flex;
+    flex-direction: row;
+  }
+  .filter-bar {
+  flex: 1;
+  /* Adjust width as needed */
+  width: 200px; /* Example width */
+  height: 100vh; /* Full viewport height */
+  overflow-y: auto; /* Make vertical scrollable if content overflows */
+}
+
+.products {
+  flex: 3;
+  /* Adjust width as needed, or leave flexible */
+}
+  @media (max-width: 600px) {
+    .filter-bar {
+      display: flex;
+      flex-direction: column; /* or row, depending on your needs */
+      /* Add any other flex styling you need here */
+    }
+  }
+  @media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .filter-bar {
+    height: auto;
+    width: 100%; /* Full width */
+    overflow-x: scroll; /* Make horizontal scrollable */
+    white-space: nowrap; /* Keep filter options in one line */
+  }
+}
+</style>
 <body>
   <div class="product-listing">
     <div class="filter-bar">
@@ -65,16 +103,42 @@
         <div class="box">
   
           <h2>Price <span>Range</span></h2>
-          <div class="values">
-              <div>$<span id="first"></span></div> - <div>$<span id="second"></span></div>
-          </div>
-  
-          <small>
-              Current Range:
-              <div>$<span id="third"></span></div>
-          </small>
-      
-          <div class="slider" data-value-0="#first" data-value-1="#second" data-range="#third"></div>
+            <div class="container">
+              <label>
+                <input type="checkbox" checked>
+                <span>
+                  10<i class="ri-discount-percent-line"></i>Discount
+                </span>
+              </label>
+    
+              <label>
+                <input type="checkbox">
+                <span>
+                  25 <i class="ri-discount-percent-line"></i>Discount
+                </span>
+              </label>
+    
+              <label>
+                <input type="checkbox">
+                <span>
+                  50<i class="ri-discount-percent-line"></i>Discount
+                </span>
+              </label>
+            
+              <label>
+                <input type="checkbox" checked>
+                <span>
+                  60<i class="ri-discount-percent-line"></i>Discount
+                </span>
+              </label>
+            
+              <label>
+                <input type="checkbox">
+                <span>
+                  75<i class="ri-discount-percent-line"></i>Discount
+                </span>
+              </label>  
+            </div>
         </div>
       </div>
       <div class="Rating-Filtering">
@@ -123,7 +187,7 @@
       </div>
     </div>
     <div class="product-area">
-      <div class="product-menu">
+      <!-- <div class="product-menu">
         <small>
           Showing X to X of X items
         </small>
@@ -134,7 +198,7 @@
             <a href=""><i class="ri-account-circle-line ixon"></i></a>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="containering">
         <div class="card-1 card-div">
             <div class="like-icon-div">

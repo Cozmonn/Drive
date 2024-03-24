@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
 body {
     margin: 0;
     padding: 0;
@@ -12,9 +14,19 @@ body {
     height: 80vh; /* Set the height of the body to 100% of the viewport height */
     display: flex;
     align-items: center;
+    width: 100%;
     justify-content: center;
-    background: url(https://s3-alpha-sig.figma.com/img/a506/3436/53ebe9826e4d25f3b2b72f2a4e402b8d?Expires=1707696000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=a5i6~r~ey921iuI4v60ojIhemf7z9wcdGmhg999EC6J9bjnVdOmDOubmh-xBEgb-54uDo1NLqUhR2JcAVI1mq4PW81CSPxPVSGdo~OuX9L99AqAU-ijNLhk8zDJiIy4sSbIVIzT8Yfo2puIgoC1K0RQYJEpvr3Zx~VTV~r29xI4vF40YlfW~RSJGFaommq5LX5zdpUs5-V3Al98U0HE8R5w0OCs2TAFhfbo9pkCaZZ3qCtxilxID67WwPoFxDlrNOPPFtj1dDNr5nvVCUeaY9cJf4yPIakSDKRG4SnSwIxmSeFk-XfSQ8ITV0Gwq-Ak2-t9KJjvtbFozjATfewy0gw__), center/100% auto no-repeat;
+    background: url('../../Drive/templates/autumn-decoration-with-smoothies.jpg'), center/100% auto no-repeat;
+    background-repeat: no-repeat;
+    background-size: cover; /* This will ensure that the image is scaled within the container */
+    background-position: center center;
 }
+  .BTitle{
+    font-family: "Pacifico", cursive;
+    font-size: 110px;
+    padding-left: 50%;
+    color: #41BF29;
+  }
   .representation {
     flex: 1;
     width: 30%;
@@ -25,7 +37,7 @@ body {
   .banner {
     position: absolute;
     flex: 0; /* Don't grow or shrink, so it stays centered */
-    height: 50px;
+    /* height: 50px; */
     top : 84%;
     z-index: 2;
     width: 50%;
@@ -35,7 +47,15 @@ body {
     padding: 20px;
     margin-left: 25%;
     text-align: center;
+    display: flex;
+    gap: 2em;
+    justify-content: center;
 
+  }
+  .icon{
+    display: flex;
+    font-size: 100%;
+    font-weight: 800;
   }
   .left{
     /* padding-top: 12%; */
@@ -75,18 +95,22 @@ body {
   .right{
     position: absolute;
     left:50%;
+    top: 95%;
   }
   .img-pre{
-    width:100%;
+    width:75%;
     height: auto;
   }
   .new-products{
+    padding-left: 10%;
+    justify-content: center;
     display: flex;
     position: absolute;
     top: 180%;
     width: 100%;
     height: 70%;
     background: rgba(242, 194, 114, 0.63);
+    align-items: center;
   }
   /* .product{
     width:20%;
@@ -117,22 +141,33 @@ body {
   .material{
     position: absolute;
     width: 100%;
+    height: 717px;
     top: 250%;
     background: rgba(101, 185, 85, 0.60);
+    display: flex;
+    justify-content: center;
+    /* align-items: baseline; */
+    
   }
   .top-section{
-
+    position: absolute;
+    display: flex;
+    padding-top: 2em;
+    padding-right: 35%;
   }
 
   .bottom-section{
-
+    position: absolute;
+    display: flex;
+    padding-top: 21em;
+    padding-left: 35%;
   }
   .left-section-I{
     border-radius: 15px;
-    width: 20%;
-    height: 600px;
+    width: 100%;
+    height: auto;
     overflow: hidden;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    box-shadow: rgba(0, 0, 0, 0.25);
   }
   .sleft-section-I img {
     width: 100%;
@@ -140,7 +175,12 @@ body {
     object-fit: cover; /* Adjust this property based on your needs: 'cover', 'contain', etc. */
   }
   .left-section-II{
-
+    padding-top: 3em;
+    padding-right: 2em;
+  }
+  .right-section-I{
+    padding-top: 3em;
+    padding-left: 2em;
   }
   p{
     color: #FFF;
@@ -250,5 +290,7 @@ body {
     opacity:0.6;
   }
   .footer{
-    margin-top: 1976px;
+    position: absolute;
+    top: 328%;
+    width: 100%;
   }
