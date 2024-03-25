@@ -38,6 +38,7 @@ class Customer(UserAuth):
     shipping_address = models.TextField()
     registration_date = models.DateTimeField(auto_now_add=True)
     last_login_date = models.DateTimeField(null=True, blank=True)
+    
     class Meta:
         verbose_name_plural = "Customer"
     # No need to redefine uuid or username since they're inherited from UserAuth
