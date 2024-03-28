@@ -81,7 +81,7 @@ def logoutt(request):
 
 
 from django.shortcuts import render
-from .models import UserAuth
+from .models import Business, Customer, UserAuth
 
 def profile_view(request):
     print(request.user)
@@ -101,7 +101,7 @@ def customer_login(request):
         else:
             # Handle invalid login for customers
             pass
-    return render(request, 'customer_login.html')
+    return render(request, 'login.html')
 
 
 def business_login(request):
