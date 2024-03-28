@@ -75,8 +75,23 @@
     </div>
 </div>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
 
+            // Validate form inputs
+            const usernameInput = document.getElementById('InputEmail1');
+            const passwordInput = document.getElementById('InputPassword1');
+            if (usernameInput.value.trim() === '' || passwordInput.value.trim() === '') {
+                alert('Please fill in all fields.');
+                return; // Exit early if any field is empty
+            }
+
+            // If all inputs are valid, submit the form
+            form.submit();
+        });
+    });
 </script>         
 </body>
 </html>
-
