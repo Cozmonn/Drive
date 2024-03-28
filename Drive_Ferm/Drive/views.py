@@ -90,22 +90,32 @@ def profile_view(request):
     context = {'profile': profile}
     return render(request, 'client-view.html', context)
 
-def login(request):
+def customer_login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-
-        user = auth.authenticate(username=username, password=password)
-
-        if user is not None:
-            auth.login(request, user)
-            return redirect('home')  # Assuming 'home' is the name of your homepage URL pattern
+        user = authenticate(request, username=username, password=password)
+        if user is not None and isinstance(user, Customer):
+            login(request, user)
+            return redirect('customer_dashboard')  # Redirect to customer dashboard
         else:
-            messages.error(request, 'Invalid username or password.')
-            return redirect('login')  # Redirect to login page in case of invalid credentials
+            # Handle invalid login for customers
+            pass
+    return render(request, 'customer_login.html')
 
-    return render(request, 'login.html')
 
+def business_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None and isinstance(user, Business):
+            login(request, user)
+            return redirect('business_dashboard')  # Redirect to business dashboard
+        else:
+            # Handle invalid login for businesses
+            pass
+    return render(request, 'business_login.html')
 # views.py
 
 from django.shortcuts import render, redirect

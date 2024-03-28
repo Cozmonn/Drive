@@ -34,28 +34,50 @@ class UserAuth(AbstractUser):
     class Meta:
         verbose_name_plural = "UserAuths"
 
+# class UserAuth(AbstractUser):
+#     uuid = models.UUIDField(unique=True)
+
 class Customer(UserAuth):
     shipping_address = models.TextField()
     registration_date = models.DateTimeField(auto_now_add=True)
     last_login_date = models.DateTimeField(null=True, blank=True)
-    
+
     class Meta:
-        verbose_name_plural = "Customer"
-    # No need to redefine uuid or username since they're inherited from UserAuth
+        verbose_name_plural = "Customers"
 
 class Business(UserAuth):
     business_name = models.CharField(max_length=255)
     business_id = models.CharField(max_length=100, unique=True)
     location = models.CharField(max_length=255)
-    # Consider not duplicating the email field; use the one from UserAuth
-    # business_email = models.EmailField(unique=True)
     business_phone_number = models.CharField(max_length=20)
 
     class Meta:
-        verbose_name_plural = "Business"
+        verbose_name_plural = "Businesses"
     
     def __str__(self):
         return self.business_name
+# class Customer(UserAuth):
+#     shipping_address = models.TextField()
+#     registration_date = models.DateTimeField(auto_now_add=True)
+#     last_login_date = models.DateTimeField(null=True, blank=True)
+    
+#     class Meta:
+#         verbose_name_plural = "Customer"
+#     # No need to redefine uuid or username since they're inherited from UserAuth
+
+# class Business(UserAuth):
+#     business_name = models.CharField(max_length=255)
+#     business_id = models.CharField(max_length=100, unique=True)
+#     location = models.CharField(max_length=255)
+#     # Consider not duplicating the email field; use the one from UserAuth
+#     # business_email = models.EmailField(unique=True)
+#     business_phone_number = models.CharField(max_length=20)
+
+#     class Meta:
+#         verbose_name_plural = "Business"
+    
+#     def __str__(self):
+#         return self.business_name
 
 
 
