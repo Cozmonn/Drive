@@ -184,21 +184,27 @@
 		  <div class="border rounded-2 px-3 py-2 bg-white">
 			<!-- Pills navs -->
 			<ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
-			  <li class="nav-item d-flex" role="presentation">
-				<a class="nav-link d-flex align-items-center justify-content-center w-100 active" id="ex1-tab-1" data-mdb-toggle="pill" href="#ex1-pills-1" role="tab" aria-controls="ex1-pills-1" aria-selected="true">Specification</a>
-			  </li>
-			  <li class="nav-item d-flex" role="presentation">
-				<a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-2" data-mdb-toggle="pill" href="#ex1-pills-2" role="tab" aria-controls="ex1-pills-2" aria-selected="false">Warranty info</a>
-			  </li>
-			  <li class="nav-item d-flex" role="presentation">
-				<a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-3" data-mdb-toggle="pill" href="#ex1-pills-3" role="tab" aria-controls="ex1-pills-3" aria-selected="false">Shipping info</a>
-			  </li>
-			  <li class="nav-item d-flex" role="presentation">
-				<a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-4" data-mdb-toggle="pill" href="#ex1-pills-4" role="tab" aria-controls="ex1-pills-4" aria-selected="false">Seller profile</a>
-			  </li>
-			</ul>
+				<li class="nav-item d-flex" role="presentation">
+				  <button id="specification-button" class="nav-link d-flex align-items-center justify-content-center w-100 active" data-mdb-toggle="pill" role="tab" aria-controls="ex1-pills-1" aria-selected="true">Specification</button>
+				</li>
+				<li class="nav-item d-flex" role="presentation">
+				  <button id="warranty-button" class="nav-link d-flex align-items-center justify-content-center w-100" data-mdb-toggle="pill" role="tab" aria-controls="ex1-pills-2" aria-selected="false">Warranty info</button>
+				</li>
+				<li class="nav-item d-flex" role="presentation">
+				  <button id="shipping-button" class="nav-link d-flex align-items-center justify-content-center w-100" data-mdb-toggle="pill" role="tab" aria-controls="ex1-pills-3" aria-selected="false">Shipping info</button>
+				</li>
+				<li class="nav-item d-flex" role="presentation">
+				  <button id="profile-button" class="nav-link d-flex align-items-center justify-content-center w-100" data-mdb-toggle="pill" role="tab" aria-controls="ex1-pills-4" aria-selected="false">Seller profile</button>
+				</li>
+			  </ul>
+			  
 			<!-- Pills navs -->
-  
+			<!-- <div class="container text-center mt-3">
+				<button id="specification-button" class="btn btn-primary">Specification</button>
+				<button id="warranty-button" class="btn btn-primary">Warranty</button>
+				<button id="shipping-button" class="btn btn-primary">Shipping</button>
+				<button id="profile-button" class="btn btn-primary">Profile</button>
+			  </div> -->
 			<!-- Pills content -->
 			<div class="tab-content" id="ex1-content">
 			  <div class="tab-pane fade show active" id="ex1-pills-1" role="tabpanel" aria-labelledby="ex1-tab-1">
@@ -267,6 +273,7 @@
 				officia deserunt mollit anim id est laborum.
 			  </div>
 			</div>
+
 			<!-- Pills content -->
 		  </div>
 		</div>
@@ -464,4 +471,59 @@
   </footer>
   <!-- Footer -->
   
+  <script>
+	document.addEventListener('DOMContentLoaded', function() {
+  const specificationButton = document.getElementById('specification-button');
+  const warrantyButton = document.getElementById('warranty-button');
+  const shippingButton = document.getElementById('shipping-button');
+  const profileButton = document.getElementById('profile-button');
+
+  const specificationTab = document.getElementById('ex1-pills-1');
+  const warrantyTab = document.getElementById('ex1-pills-2');
+  const shippingTab = document.getElementById('ex1-pills-3');
+  const profileTab = document.getElementById('ex1-pills-4');
+
+  function setActiveButton(button) {
+    // Remove 'active' class from all buttons
+    const buttons = document.querySelectorAll('.nav-link');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    
+    // Add 'active' class to the clicked button
+    button.classList.add('active');
+  }
+
+  specificationButton.addEventListener('click', function() {
+    setActiveButton(this);
+    specificationTab.classList.add('show', 'active');
+    warrantyTab.classList.remove('show', 'active');
+    shippingTab.classList.remove('show', 'active');
+    profileTab.classList.remove('show', 'active');
+  });
+
+  warrantyButton.addEventListener('click', function() {
+    setActiveButton(this);
+    specificationTab.classList.remove('show', 'active');
+    warrantyTab.classList.add('show', 'active');
+    shippingTab.classList.remove('show', 'active');
+    profileTab.classList.remove('show', 'active');
+  });
+
+  shippingButton.addEventListener('click', function() {
+    setActiveButton(this);
+    specificationTab.classList.remove('show', 'active');
+    warrantyTab.classList.remove('show', 'active');
+    shippingTab.classList.add('show', 'active');
+    profileTab.classList.remove('show', 'active');
+  });
+
+  profileButton.addEventListener('click', function() {
+    setActiveButton(this);
+    specificationTab.classList.remove('show', 'active');
+    warrantyTab.classList.remove('show', 'active');
+    shippingTab.classList.remove('show', 'active');
+    profileTab.classList.add('show', 'active');
+  });
+});
+
+  </script>
   
