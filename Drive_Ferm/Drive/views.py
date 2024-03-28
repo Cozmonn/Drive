@@ -38,39 +38,8 @@ from .form import SignInForm, EditProfileForm
 
 #login_view
 
-def logform(request):
-    if request.method=='POST':
-        username = request.POST['username']
-        print(request.POST['username'])
-        password = request.POST['password']
-        print(request.POST['password'])
-        user = authenticate(request, username=username, password=password)
-        print('logged in')
-        login(request, user)
-        print('logged in')
-        return redirect('profile')
-    else:
-        return render(request, 'login.html')
 
 #sign_up_view
-def register_user(request):
-    if request.method=='POST':
-        form = SignInForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            messages.warning(request,("Please complete ur signing up"))
-            return redirect('profile')
-        else:
-            messages.warning(request,("There was an error Logging In, Please try again!"))
-    else:
-        form=SignInForm()
-    return render(request, 'signup.html', {
-            'form':form,
-    })
 
 
 def logoutt(request):
@@ -119,7 +88,7 @@ def business_login(request):
 # views.py
 
 from django.shortcuts import render, redirect
-
+from django.urls import reverse
 def signup(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -140,7 +109,7 @@ def signup(request):
                 shipping_address=shipping_address
             )
             new_customer.save()
-
+            
         elif user_type == 'business_owner':
             business_name = request.POST.get('business_name')
             phone_number = request.POST.get('phone_number')
@@ -156,6 +125,6 @@ def signup(request):
             )
             new_business.save()
 
-        return redirect('login')  # Redirect to login page after successful signup
+        return redirect(reverse('login'))  # Redirect to login page after successful signup
 
     return render(request, 'signup.html')  # Render the signup page template for GET requests
