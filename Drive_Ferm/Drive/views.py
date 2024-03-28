@@ -122,42 +122,40 @@ from django.shortcuts import render, redirect
 
 def signup(request):
     if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
         email = request.POST.get('email')
         password = request.POST.get('password')
         user_type = request.POST.get('user_type')
 
         if user_type == 'customer':
-            # Create a new Customer object
-            customer = Customer.objects.create_user(
-                username=email,  # You can use email as the username
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                password=password
-            )
-            # Add any additional fields specific to the Customer model
-            customer.shipping_address = request.POST.get('shipping_address')
-            customer.save()
-            # Redirect to the appropriate page after successful registration
-            return redirect('customer_dashboard')
-        elif user_type == 'business_owner':
-            # Create a new Business object
-            business = Business.objects.create_user(
-                username=email,
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                password=password
-            )
-            # Add any additional fields specific to the Business model
-            business.business_name = request.POST.get('business_name')
-            business.business_id = request.POST.get('business_id')
-            business.location = request.POST.get('location')
-            business.business_phone_number = request.POST.get('business_phone_number')
-            business.save()
-            # Redirect to the appropriate page after successful registration
-            return redirect('business_dashboard')
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            shipping_address = request.POST.get('shipping_address')
 
-    return render(request, 'signup.html')
+            # Create a new Customer object
+            new_customer = Customer.objects.create_user(
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                shipping_address=shipping_address
+            )
+            new_customer.save()
+
+        elif user_type == 'business_owner':
+            business_name = request.POST.get('business_name')
+            phone_number = request.POST.get('phone_number')
+            location = request.POST.get('location')
+
+            # Create a new Business object
+            new_business = Business.objects.create_user(
+                email=email,
+                password=password,
+                business_name=business_name,
+                phone_number=phone_number,
+                location=location
+            )
+            new_business.save()
+
+        return redirect('login')  # Redirect to login page after successful signup
+
+    return render(request, 'signup.html')  # Render the signup page template for GET requests
