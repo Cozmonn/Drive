@@ -31,14 +31,6 @@
                 </div>
                 <br><br>
                 <div class="form-group ps-5 pe-5">
-                    <label for="InputFname">First name</label>
-                    <input type="text" aria-label="First name" class="form-control" placeholder="First name" name="first_name" required>
-                </div>
-                <div class="form-group ps-5 pe-5">
-                    <label for="InputLname">Last name</label>
-                    <input type="text" aria-label="Last name" class="form-control" placeholder="Last name" name="last_name" required>
-                </div>
-                <div class="form-group ps-5 pe-5">
                     <label for="InputEmail1">Email address</label>
                     <input type="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp" placeholder="Enter email" name="email" required>
                     <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
@@ -69,6 +61,12 @@
                         <input type="text" class="form-control" id="InputLocation" placeholder="Location" name="location">
                     </div>
                 </div>
+                <div id="customerFields" style="display: none;">
+                    <div class="form-group ps-5 pe-5">
+                        <label for="InputShippingAddress">Shipping Address</label>
+                        <input type="text" class="form-control" id="InputShippingAddress" placeholder="Shipping Address" name="shipping_address">
+                    </div>
+                </div>
                 <br>
                 <button type="submit" class="btn btn-outline-success">Submit</button>
             </form>
@@ -80,11 +78,17 @@
     document.getElementById('userType').addEventListener('change', function() {
         var userType = this.value;
         var businessFields = document.getElementById('businessFields');
+        var customerFields = document.getElementById('customerFields');
 
         if (userType === 'business_owner') {
             businessFields.style.display = 'block';
+            customerFields.style.display = 'none';
+        } else if (userType === 'customer') {
+            businessFields.style.display = 'none';
+            customerFields.style.display = 'block';
         } else {
             businessFields.style.display = 'none';
+            customerFields.style.display = 'none';
         }
     });
 </script>
