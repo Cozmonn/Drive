@@ -55,6 +55,20 @@
                         <option value="business_owner">Business Owner</option>
                     </select>
                 </div>
+                <div id="businessFields" style="display: none;">
+                    <div class="form-group ps-5 pe-5">
+                        <label for="InputBusinessName">Name of the Business</label>
+                        <input type="text" class="form-control" id="InputBusinessName" placeholder="Name of the Business" name="business_name">
+                    </div>
+                    <div class="form-group ps-5 pe-5">
+                        <label for="InputPhoneNumber">Phone Number</label>
+                        <input type="text" class="form-control" id="InputPhoneNumber" placeholder="Phone Number" name="phone_number">
+                    </div>
+                    <div class="form-group ps-5 pe-5">
+                        <label for="InputLocation">Location</label>
+                        <input type="text" class="form-control" id="InputLocation" placeholder="Location" name="location">
+                    </div>
+                </div>
                 <br>
                 <button type="submit" class="btn btn-outline-success">Submit</button>
             </form>
@@ -62,5 +76,18 @@
     </div>
 </div>
          
+<script>
+    document.getElementById('userType').addEventListener('change', function() {
+        var userType = this.value;
+        var businessFields = document.getElementById('businessFields');
+
+        if (userType === 'business_owner') {
+            businessFields.style.display = 'block';
+        } else {
+            businessFields.style.display = 'none';
+        }
+    });
+</script>
+
 </body>
 </html>

@@ -121,4 +121,43 @@ def business_login(request):
 from django.shortcuts import render, redirect
 
 def signup(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user_type = request.POST.get('user_type')
+
+        if user_type == 'customer':
+            # Create a new Customer object
+            customer = Customer.objects.create_user(
+                username=email,  # You can use email as the username
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                password=password
+            )
+            # Add any additional fields specific to the Customer model
+            customer.shipping_address = request.POST.get('shipping_address')
+            customer.save()
+            # Redirect to the appropriate page after successful registration
+            return redirect('customer_dashboard')
+        elif user_type == 'business_owner':
+            # Create a new Business object
+            business = Business.objects.create_user(
+                username=email,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                password=password
+            )
+            # Add any additional fields specific to the Business model
+            business.business_name = request.POST.get('business_name')
+            business.business_id = request.POST.get('business_id')
+            business.location = request.POST.get('location')
+            business.business_phone_number = request.POST.get('business_phone_number')
+            business.save()
+            # Redirect to the appropriate page after successful registration
+            return redirect('business_dashboard')
+
     return render(request, 'signup.html')
