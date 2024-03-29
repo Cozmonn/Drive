@@ -112,4 +112,13 @@ class Review(models.Model):
         ]
                                          )
     review_date = models.DateTimeField(auto_now_add=True)
+class PageVisit(models.Model):
+    path = models.CharField(max_length=200)
+    day_offset = models.IntegerField(default=0)
+    visit_count = models.IntegerField(default=0)
 
+    class Meta:
+        unique_together = ('path', 'day_offset')
+
+    def __str__(self):
+        return f"{self.path} - Day Offset: {self.day_offset} - {self.visit_count} Visits"

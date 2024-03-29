@@ -16,6 +16,7 @@ urlpatterns = [
     path("loout/", views.logoutt, name="logout"),
     path("profile/", views.profile_view, name="profile"),
     path('pay/', views.pay, name="pay"),
+    path('chack/', views.dashboard_view, name="chack"),
     path('feedback/', views.feedback, name='feedback'),
     path('AddProduct/', views.add_product, name="Nproduct"),
     path('checkout/', views.create_checkout_session, name="checkoutSession"),

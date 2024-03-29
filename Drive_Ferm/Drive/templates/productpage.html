@@ -15,13 +15,21 @@
 />
 <style>
 	.icon-hover:hover {
-  border-color: #3b71ca !important;
+  border-color: rgb(200, 73, 73) !important;
   background-color: white !important;
-  color: #3b71ca !important;
+  color: rgb(200, 73, 73) !important;
+}
+.icon-hover2:hover {
+  border-color: #0d6efd !important;
+  background-color: white !important;
+  color: #0d6efd !important;
 }
 
+.icon-hover2:hover i {
+  color: #0d6efd !important;
+}
 .icon-hover:hover i {
-  color: #3b71ca !important;
+  color: rgb(200, 73, 73) !important;
 }
 </style>
 <header>
@@ -31,8 +39,8 @@
 		<div class="row gy-3">
 		  <!-- Left elements -->
 		  <div class="col-lg-2 col-sm-4 col-4">
-			<a href="https://mdbootstrap.com/" target="_blank" class="float-start">
-			  <img src="./Logo.png" height="35" />
+			<a href="./index.html" target="_blank" class="float-start">
+			  <img src="../../static/Logo.png" />
 			</a>
 		  </div>
 		  <!-- Left elements -->
@@ -41,8 +49,8 @@
 		  <div class="order-lg-last col-lg-5 col-sm-8 col-8">
 			<div class="d-flex float-end">
 			  <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" target="_blank"> <i class="fas fa-user-alt m-1 me-md-2"></i><p class="d-none d-md-block mb-0">Sign in</p> </a>
-			  <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center" target="_blank"> <i class="fas fa-heart m-1 me-md-2"></i><p class="d-none d-md-block mb-0">Wishlist</p> </a>
-			  <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="border rounded py-1 px-3 nav-link d-flex align-items-center" target="_blank"> <i class="fas fa-shopping-cart m-1 me-md-2"></i><p class="d-none d-md-block mb-0">My cart</p> </a>
+			  <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center icon-hover" target="_blank"> <i class="fas fa-heart m-1 me-md-2"></i><p class="d-none d-md-block mb-0">Wishlist</p> </a>
+			  <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="border rounded py-1 px-3 nav-link d-flex align-items-center icon-hover2" target="_blank"> <i class="fas fa-shopping-cart m-1 me-md-2"></i><p class="d-none d-md-block mb-0">My cart</p> </a>
 			</div>
 		  </div>
 		  <!-- Center elements -->
@@ -64,24 +72,6 @@
 	  </div>
 	</div>
 	<!-- Jumbotron -->
-  
-	<!-- Heading 
-	<div class="bg-primary">
-	  <div class="container py-4">
-		-- Breadcrumb --
-		<nav class="d-flex">
-		  <h6 class="mb-0">
-			<a href="" class="text-white-50">Home</a>
-			<span class="text-white-50 mx-2"> > </span>
-			<a href="" class="text-white-50">Library</a>
-			<span class="text-white-50 mx-2"> > </span>
-			<a href="" class="text-white"><u>Data</u></a>
-		  </h6>
-		</nav>
-		-- Breadcrumb --
-	  </div>
-	</div>
-	-- Heading -->
   </header>
   
   <!-- content -->
@@ -147,23 +137,23 @@
 			<div class="row mb-4">
 			  <div class="col-md-4 col-6">
 				<label class="mb-2">Size</label>
-				<select class="form-select border border-secondary" style="height: 35px;">
-				  <option>Small</option>
-				  <option>Medium</option>
-				  <option>Large</option>
+				<select class="form-select" aria-label="Default select example">
+					<option selected>Open this select menu</option>
+					<option value="1">One</option>
+					<option value="2">Two</option>
+					<option value="3">Three</option>
 				</select>
 			  </div>
 			  <!-- col.// -->
 			  <div class="col-md-4 col-6 mb-3">
 				<label class="mb-2 d-block">Quantity</label>
 				<div class="input-group mb-3" style="width: 170px;">
-				  <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon1" data-mdb-ripple-color="dark">
-					<i class="fas fa-minus"></i>
-				  </button>
-				  <input type="text" class="form-control text-center border border-secondary" placeholder="14" aria-label="Example text with button addon" aria-describedby="button-addon1" />
-				  <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon2" data-mdb-ripple-color="dark">
-					<i class="fas fa-plus"></i>
-				  </button>
+					<select class="form-select" aria-label="Default select example">
+						<option selected>Open this select menu</option>
+						<option value="1">One</option>
+						<option value="2">Two</option>
+						<option value="3">Three</option>
+					</select>
 				</div>
 			  </div>
 			</div>
@@ -328,7 +318,7 @@
 	</div>
   </section>
   <!-- Footer -->
-  <footer class="text-center text-lg-start text-muted bg-primary mt-3">
+  <footer class="text-center text-lg-start text-muted mt-3" style="background-color: #212529;">
 	<!-- Section: Links  -->
 	<section class="">
 	  <div class="container text-center text-md-start pt-4 pb-4">

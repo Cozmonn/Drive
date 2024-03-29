@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    #firstDiv {
+    width: 200px;
+    height: 100px;
+    background-color: #d21c1c;
+    border: 1px solid #ccc;
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999; /* Make sure it's above other content */
+}
+.chatbtttn{
+        position: absolute;
+    width: 15%;
+    HEIGHT: 15%;
+    Z-INDEX: 11111111;
+    COLOR: RED;
+    BORDER-RADIUS: 100%;
+    }
+
+#secondDiv {
+    width: 200px;
+    height: 100px;
+    background-color: #e0e0e0;
+    border: 1px solid #999;
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 998; /* Make sure it's below the first div */
+}
+
+</style>
+<body>
+    <div id="firstDiv">This is the first div</div>
+    <div id="secondDiv" style="display: none;">This is the second div</div>
+    <div class="chatbtttn">
+        <i class="bi bi-robot"></i>
+      </div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var firstDiv = document.getElementById('firstDiv');
+    var secondDiv = document.getElementById('secondDiv');
+
+    // Event listener for clicking the first div
+    firstDiv.addEventListener('click', function() {
+        // Show the second div
+        secondDiv.style.display = 'block';
+        // Hide the first div
+        firstDiv.style.display = 'none';
+    });
+
+    // Event listener for clicking anywhere on the document
+    document.addEventListener('click', function(event) {
+        // Check if the click target is not the first or second div
+        if (event.target !== firstDiv && event.target !== secondDiv) {
+            // Hide the second div
+            secondDiv.style.display = 'none';
+            // Show the first div
+            firstDiv.style.display = 'block';
+        }
+    });
+});
+
+</script>
+</html>

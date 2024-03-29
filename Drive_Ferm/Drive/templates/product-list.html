@@ -31,24 +31,6 @@
       .group:focus .group-focus\:flex {
     display: flex;
 }
-    .absolute{
-      /* padding-left: 19em; */
-      z-index: 100;
-      color: white;
-    }
-    .heart-icon-container {
-    transition: transform 0.2s ease; /* Smooth transition for hover effect */
-}
-
-.heart-icon:hover {
-    transform: scale(1.1); /* Slightly enlarge the icon on hover */
-}
-
-/* Example for changing icon color on hover */
-.heart-icon:hover svg {
-    fill: red; /* Change fill color on hover */
-    stroke: red; /* Change stroke color on hover */
-}
     </style>
   </head>
   <body >
@@ -62,7 +44,7 @@
           </button>
           <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
             <a href=".">
-              <img src="./Logo.png" width="110" height="32" alt="Tabler" class="navbar-brand-image">
+              <img src="../../static/Logo.png" width="110" height="32" alt="Tabler" class="navbar-brand-image">
             </a>
           </h1>
           <div class="navbar-nav flex-row order-md-last">
@@ -215,6 +197,15 @@
                     </span>
                   </a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./form-elements.html" >
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                      <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-fence"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 12v4h16v-4z" /><path d="M6 16v4h4v-4m0 -4v-6l-2 -2l-2 2v6" /><path d="M14 16v4h4v-4m0 -4v-6l-2 -2l-2 2v6" /></svg>                    </span>
+                    <span class="nav-link-title">
+                      Farm - Ferme des Lumières
+                    </span>
+                  </a>
+                </li>
               </ul>
               <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
                 <form action="./" method="get" autocomplete="off" novalidate>
@@ -259,7 +250,7 @@
           <div class="container-xl">
             <div class="card card-lg">
               <div class="card-body">
-                <div class="space-y-4">
+                <div class="space-y-1">
                   	<!-- Component Start -->
 	<h1 class="text-3xl">Product Category Page Title</h1>
 	<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between mt-6">
@@ -274,20 +265,18 @@
 				</svg>
 			</div>
 			<div class="absolute z-10 flex-col items-start hidden w-full pb-1 bg-white shadow-lg rounded group-focus:flex">
-				<a class="w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Popular</a>
-				<a class="w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Featured</a>
-				<a class="w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Newest</a>
-				<a class="w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Lowest Price</a>
-				<a class="w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Highest Price</a>
+				<a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Popular</a>
+				<a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Featured</a>
+				<a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Newest</a>
+				<a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Lowest Price</a>
+				<a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Highest Price</a>
 			</div>
 		</button>
 	</div>
 	<div class="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-12 w-full mt-6">
 		<!-- Product Tile Start -->
 		<div>
-
       <center>
-
         <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
           <img src="./image_67178497 (1).JPG" alt="" class="block h-64 rounded-lg shadow-lg">
         </a>
@@ -304,9 +293,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="../../static/huile2.JPG" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -319,9 +312,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="../../static/huile3.jpg" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -334,9 +331,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="../../static/Minimalist Black and White Blank Paper Document.pdf.png" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -349,9 +350,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="../../static/huile1.JPG" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -364,9 +369,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="./image_67178497 (1).JPG" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -379,9 +388,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="../../static/Minimalist Black and White Blank Paper Document.pdf.png" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -394,9 +407,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="../../static/huile3.jpg" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -409,9 +426,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="./image_67178497 (1).JPG" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -424,9 +445,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="./image_67178497 (1).JPG" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -439,9 +464,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="./image_67178497 (1).JPG" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -454,9 +483,13 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
+    		<!-- Product Tile Start -->
 		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
+      <center>
+        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+          <img src="../../static/huile1.JPG" alt="" class="block h-64 rounded-lg shadow-lg">
+        </a>
+      </center>
 			<div class="flex items-center justify-between mt-3">
 				<div>
 					<a href="#" class="font-medium">Product Name</a>
@@ -469,66 +502,7 @@
 			</div>
 		</div>
 		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
-		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
-		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
-		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-		<!-- Product Tile Start -->
-		<div>
-			<a href="#" class="block h-64 rounded-lg shadow-lg bg-white"></a>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
+		
 	</div>
 	<div class="flex justify-center mt-10 space-x-1">
 		<button class="flex items-center justify-center h-5 w-8 rounded text-gray-400">

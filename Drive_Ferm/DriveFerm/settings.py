@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Drive.middleware.visit_counter_middleware',
 ]
 
 ROOT_URLCONF = 'DriveFerm.urls'
@@ -132,3 +133,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# STRIPE KEYS
+
+STRIPE_PUBLIC_KEY = "pk_test_51Oys1fINURbXn45vfRo2VRsy1pdsGDzylVxEZ2zbxkvgRzMODZa11Uh3vzd0jN1uUhJGa31Ur0sUPl67d5dXHefF00skpxD6mb"
+STRIPE_SECRET_KEY = "sk_test_51Oys1fINURbXn45vLPJuNvQjfSdJZ7DT0SPAT9lg8y6jkWBxqcR2R4mghBHFgVQTIqrWZPCnevHKS3ro9hUwb1gJ00mLkdeAvd"
+STRIPE_WEBHOOK_SECRET = ""
