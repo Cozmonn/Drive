@@ -19,6 +19,8 @@
     <link href="../../static/dist/css/tabler-payments.min.css?1684106062" rel="stylesheet"/>
     <link href="../../static/dist/css/tabler-vendors.min.css?1684106062" rel="stylesheet"/>
     <link href="../../static/dist/css/demo.min.css?1684106062" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
       @import url('https://rsms.me/inter/inter.css');
       :root {
@@ -30,7 +32,7 @@
     </style>
   </head>
   <body >
-    <script src="../../static/dist/js/demo-theme.min.js?1684106062"></script>
+    <script src="../../dist/js/demo-theme.min.js?1684106062"></script>
     <div class="page">
       <!-- Navbar -->
       <header class="navbar navbar-expand-md d-print-none" >
@@ -231,90 +233,104 @@
                   <div class="card-body">
                     <h4 class="subheader">Business settings</h4>
                     <div class="list-group list-group-transparent">
-                      <a href="./settings.html" class="list-group-item list-group-item-action d-flex align-items-center active">My Account</a>
+                      <a href="./settings.html" class="list-group-item list-group-item-action d-flex align-items-center">My Account</a>
                       <a href="./settings.html" class="list-group-item list-group-item-action d-flex align-items-center">New Poduct</a>
-                      <a href="./settings.html" class="list-group-item list-group-item-action d-flex align-items-center">All Products</a>
+                      <a href="./settings.html" class="list-group-item list-group-item-action d-flex align-items-center active">All Products</a>
                     </div>
                   </div>
                 </div>
                 <div class="col d-flex flex-column">
-                  <form action="" method="post">
+                  <form action="{% url 'Nproduct' %}" method="post">
                     <div class="card-body">
-                      <h2 class="mb-4">My Account</h2>
-                      <h3 class="card-title">Profile Details</h3>
-                      <div class="row align-items-center">
-                        <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url('{{ profile_picture_url }}')"></span>
+                      <h2 class="mb-4">All Product</h2>
+                      <h3 class="card-title">Product Details</h3>
+                      <div class="card">
+                        <div class="card-header">
+                          <h3 class="card-title">Invoices</h3>
                         </div>
-                        <div class="col-auto"><a href="#" class="btn">
-                            Change avatar
-                          </a></div>
-                        <div class="col-auto"><a href="#" class="btn btn-ghost-danger">
-                            Delete avatar
-                          </a></div>
-                      </div>
-                      <h3 class="card-title mt-4">Business Profile</h3>
-                      <div class="row g-3">
-                        <div class="col-md">
-                          <div class="form-label">Business Name</div>
-                          <input type="text" class="form-control" value="Tabler" name="Business_name">
-                        </div>
-                        
-                        <div class="col-md">
-                          <div class="form-label">Location</div>
-                          <input type="text" class="form-control" value="Peimei, China" name="Location">
-                        </div>
-                      </div>
-                      <h3 class="card-title mt-4">Email</h3>
-                      <p class="card-subtitle">This contact will be shown to others publicly, so choose it carefully.</p>
-                      <div>
-                        <div class="row g-2">
-                          <div class="col-auto">
-                            <input type="text" class="form-control w-auto" value="paweluna@howstuffworks.com" name="email">
+                        <div class="card-body border-bottom py-3">
+                          <div class="d-flex">
+                            <div class="text-muted">
+                              Show
+                              <div class="mx-2 d-inline-block">
+                                <input type="text" class="form-control form-control-sm" value="8" size="3" aria-label="Invoices count">
+                              </div>
+                              entries
+                            </div>
+                            <div class="ms-auto text-muted">
+                              Search:
+                              <div class="ms-2 d-inline-block">
+                                <input type="text" class="form-control form-control-sm" aria-label="Search invoice">
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <h3 class="card-title mt-4">Password</h3>
-                      <p class="card-subtitle">You can set a permanent password if you don't want to use temporary login codes.</p>
-                      <div>
-                        <div class="row">
-                            <div class="row">
-                                <div class="col-md">
-                                <div class="form-label">Old Password</div>
-                                <input type="text" class="form-control" value="Tabler" name="old_password">
-                                </div>
-                                <div class="col-md">
-                                <div class="form-label">New Password</div>
-                                <input type="text" class="form-control" value="560afc32" name="new_password1">
-                                </div>
-                                <div class="col-md">
-                                <div class="form-label">Confirm New Password</div>
-                                <input type="text" class="form-control" value="560afc32" name="new_password2">
-                                </div>
-                            </div>
+                        <div class="table-responsive">
+                          <table class="table card-table table-vcenter text-nowrap datatable">
+                            <thead>
+                              <tr>
+                                <!-- <th class="w-1">No.
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>
+                                </th> -->
+                                <th>Figuring</th>
+                                <th>Farm</th>
+                                <th>Group</th>
+                                <th>Created</th>
+                                <th>Price</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <!-- <td><span class="text-muted">001401</span></td> -->
+                                <td><span class="avatar avatar-s" style="background-image: url('./image_67178497 (1).JPG')"></span>
+                                    
+                                </td>
+                                <td>
+                                    <span class="flag flag-country-fr"></span>
+                                    Whispering Farm
+                                </td>
+                                <td>
+                                  Group Name
+                                </td>
+                                <td>
+                                  15 Dec 2017
+                                </td>
+                                <td>$887</td>
+                                <td>
+                                    <button class="btn btn-outline-danger"><i class="fa-regular fa-pen-to-square"></i></button>
+                                    <button class="btn btn-outline-success"><i class="fa-regular fa-trash-can"></i></button>
+                                </td>
+                              </tr>
+                              
+                            </tbody>
+                          </table>
                         </div>
-                    </div>
-                      <!-- <h3 class="card-title mt-4">Public profile</h3>
-                      <p class="card-subtitle">Making your profile public means that anyone on the Dashkit network will be able to find
-                        you.</p>
-                      <div>
-                        <label class="form-check form-switch form-switch-lg">
-                          <input class="form-check-input" type="checkbox" >
-                          <span class="form-check-label form-check-label-on">You're currently visible</span>
-                          <span class="form-check-label form-check-label-off">You're
-                            currently invisible</span>
-                        </label>
-                      </div> -->
-                    </div>
-                    <div class="card-footer bg-transparent mt-auto">
-                      <div class="btn-list justify-content-end">
-                        <a href="#" class="btn">
-                          Cancel
-                        </a>
-                        <a href="#" class="btn btn-primary">
-                          Submit
-                        </a>
+                        <div class="card-footer d-flex align-items-center">
+                          <p class="m-0 text-muted">Showing <span>1</span> to <span>8</span> of <span>16</span> entries</p>
+                          <ul class="pagination m-0 ms-auto">
+                            <li class="page-item disabled">
+                              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>
+                                prev
+                              </a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">5</a></li>
+                            <li class="page-item">
+                              <a class="page-link" href="#">
+                                next <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
-                    </div>
+                    </div> 
                   </form>
                 </div>
               </div>
@@ -358,7 +374,7 @@
       </div>
     </div>
     <!-- Tabler Core -->
-    <script src="../../static/dist/js/tabler.min.js?1684106062" defer></script>
-    <script src="../../static/dist/js/demo.min.js?1684106062" defer></script>
+    <script src="../../dist/js/tabler.min.js?1684106062" defer></script>
+    <script src="../../dist/js/demo.min.js?1684106062" defer></script>
   </body>
 </html>

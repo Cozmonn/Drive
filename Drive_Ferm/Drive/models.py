@@ -1,13 +1,9 @@
+import uuid
 from uuid import UUID
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
-
-
-from django.db import models
-import uuid
-from django.db import models
-from django.contrib.auth.models import AbstractUser
 
 class UserAuth(AbstractUser):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -38,7 +34,7 @@ class Customer(UserAuth):
     shipping_address = models.TextField()
     registration_date = models.DateTimeField(auto_now_add=True)
     last_login_date = models.DateTimeField(null=True, blank=True)
-    
+
     class Meta:
         verbose_name_plural = "Customer"
     # No need to redefine uuid or username since they're inherited from UserAuth
@@ -68,7 +64,7 @@ class Product(models.Model):
     description = models.TextField()
     quantity_in_stock = models.PositiveIntegerField()
     business_name = models.ForeignKey(Business, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='product_images/')  # Specify a path for image uploads
+    image = models.ImageField(upload_to='product_images/',null=True, blank=True)  # Specify a path for image uploads
 
     def __str__(self):
         return self.product_name
@@ -78,31 +74,42 @@ class ProductPricing(models.Model):
     quantity = models.CharField(max_length=100)  # You can use CharField to specify the quantity like '1kg', '3kg' etc.
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
-    def __str__(self):
-        return f"{self.quantity} - {self.price} Euros"
+# class Order(models.Model):
+#     # Specify related names for easier reverse lookups
+#     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='orders')
+#     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='orders')
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orders')
 
-class Order(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    order_date = models.DateTimeField(auto_now_add=True)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    shipping_method = models.CharField(max_length=100)
-    order_status = models.CharField(max_length=50)
+#     quantity = models.PositiveIntegerField()
+#     price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+#     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Total price field
+#     order_date = models.DateTimeField(auto_now_add=True)
+#     order_status = models.CharField(max_length=50, default='Pending')
 
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
-    price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2)
+#     def __str__(self):
+#         return f"Order {self.pk} - {self.customer} - {self.product}"
+
 
 class Cart(models.Model):
     user = models.ForeignKey(Customer, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=1)
 
+    def __str__(self):
+        return f"{self.quantity} x {self.product.product_name} ({self.product.business_name})"
+
+    def total_price(self):
+        return self.quantity * self.product.pricing.get().price
+    
 class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True, blank=True)
     review_text = models.TextField()
-    rating = models.PositiveIntegerField()
+    rating = models.PositiveIntegerField(default = 0, 
+        validators = [
+            MaxValueValidator(5),
+            MinValueValidator(0),
+        ]
+                                         )
     review_date = models.DateTimeField(auto_now_add=True)
 
