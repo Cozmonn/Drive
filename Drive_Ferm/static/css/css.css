@@ -38,7 +38,7 @@ body {
     position: absolute;
     flex: 0; /* Don't grow or shrink, so it stays centered */
     /* height: 50px; */
-    top : 84%;
+    top : 75%;
     z-index: 2;
     width: 50%;
     border-radius: 15px;

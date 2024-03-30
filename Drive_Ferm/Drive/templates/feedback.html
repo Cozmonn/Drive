@@ -30,24 +30,26 @@
       body {
       	font-feature-settings: "cv03", "cv04", "cv11";
       }
-      .rating-list li {
-          float: right;
-          color: #ddd;
-          padding: 10px 5px;
-        }
+      .rating-list .fa {
+        float: right;
+        color: black; /* Default color for not checked */
+        padding: 10px 5px;
+        cursor: pointer; /* Makes it clear that the stars are interactive */
+      }
 
-        .rating-list li:hover,
-        .rating-list li:hover ~ li {
-          color: orange;
-        }
+      .rating-list .fa.checked {
+        color: orange; /* Color for checked stars */
+      }
 
-        .rating-list {
-          display: inline-block;
-          list-style: none;
-        }
-        .checked {
-            color: orange;
-        }
+      .rating-list .fa:hover,
+      .rating-list .fa:hover ~ .fa {
+        color: orange; /* Temporary color change on hover */
+      }
+
+      .rating-list {
+        display: inline-block;
+        list-style: none;
+      }
     </style>
   </head>
   <body >
@@ -270,144 +272,116 @@
                   </div>
                 </div>
                 <div class="col d-flex flex-column">
-                  <div class="card-body">
-                    <h2 class="mb-4">Give Your Feedback</h2>
-                    <h3 class="card-title">Product Details</h3>
-                    <!-- <div class="row align-items-center">
-                      <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
-                      </div>
-                      <div class="col-auto"><a href="#" class="btn">
-                          Change Picture
-                        </a></div>
-                      <div class="col-auto"><a href="#" class="btn btn-ghost-danger">
-                          Delete Picture
-                        </a></div>
-                    </div> -->
-                    <div class="row g-3">
-
-                      <div class="col-md">
-                        <ul class="navbar-nav">
-                          <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#navbar-help" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
-                              <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/package -->
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /><path d="M16 5.25l-8 4.5" /></svg>
-                              </span>
-                              <span class="nav-link-title">
-                                Farm
-                              </span>
-                            </a>
-                            <div class="dropdown-menu" id="dropdownMenu1">
-                              {% for farm in farms %}
-                                <a class="dropdown-item" onclick="sendSelectionToBackend('{{ farm.business_name }}', 'dropdownMenu1')">
-                                  {{ farm.business_name }}
-                                </a>
-                              {% endfor %}
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                      <div class="col-md">
-                        <!-- Example split danger button -->
-                        <ul class="navbar-nav">
-                          <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#navbar-help" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
-                              <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/package -->
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /><path d="M16 5.25l-8 4.5" /></svg>
-                              </span>
-                              <span class="nav-link-title">
-                                Product
-                              </span>
-                            </a>
-                            <div class="dropdown-menu" id="dropdownMenu2">
-                              <a class="dropdown-item" onclick="sendSelectionToBackend('product', 'dropdownMenu2')">
-                                Documentation
+                  <form action="{% url 'feedback' %}" method="post">
+                    <div class="card-body">
+                      <h2 class="mb-4">Give Your Feedback</h2>
+                      <h3 class="card-title">Product Details</h3>
+                      <div class="row g-3">
+                        <div class="col-md">
+                          <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#navbar-help" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                                <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/package -->
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /><path d="M16 5.25l-8 4.5" /></svg>
+                                </span>
+                                <span class="nav-link-title">
+                                  Farm
+                                </span>
                               </a>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div class="col-md">
-                        <div class="form-label">Avg rating:</div>
-                        <!-- <h5 class="card-title">
-                          <span class="fa fa-star "></span>
-                          <span class="fa fa-star checked"></span>
-                          <span class="fa fa-star checked"></span>
-                          <span class="fa fa-star checked"></span>
-                          <span class="fa fa-star checked"></span>
-                      </h5> -->
-                      <ul class="list-inline rating-list">
-                        <li>
-                            <i class="fa fa-star" title="Rate 5"></i></li>
-                        <li>
-                            <i class="fa fa-star checked" title="Rate 4"></i></li>
-                        <li>
-                            <i class="fa fa-star checked" title="Rate 3"></i></li>
-                        <li>
-                            <i class="fa fa-star checked" title="Rate 2"></i></li>
-                        <li>
-                            <i class="fa fa-star checked" title="Rate 1"></i></li>
-                      </ul>
-                      </div>
-                    </div>
-                    <h3 class="card-title mt-4">Feedback Area</h3>
-                    <p class="card-subtitle">This description will be public to the client, make sure to provide details.</p>
-                    <div>
-                      <div class="row g-5">
-                        <div class="col-1">
-                          <textarea type="text" class="form-control w-auto" value="paweluna@howstuffworks.com"></textarea>
+                              <div class="dropdown-menu" id="dropdownMenu1">
+                                {% for farm in farms %}
+                                  <a class="dropdown-item" onclick="sendSelectionToBackend('{{ farm.business_name }}', 'dropdownMenu1')">
+                                    {{ farm.business_name }}
+                                  </a>
+                                {% endfor %}
+                              </div>
+                            </li>
+                          </ul>
                         </div>
-                        <!-- <div class="col-auto">
-                            <a href="#" class="btn">
-                            Change
-                          </a>
-                        </div> -->
+                        <div class="col-md">
+                          <!-- Example split danger button -->
+                          <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#navbar-help" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                                <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/package -->
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /><path d="M16 5.25l-8 4.5" /></svg>
+                                </span>
+                                <span class="nav-link-title">
+                                  Product
+                                </span>
+                              </a>
+                              <div class="dropdown-menu" id="dropdownMenu2">
+                                <a class="dropdown-item" onclick="sendSelectionToBackend('product', 'dropdownMenu2')">
+                                  Documentation
+                                </a>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                        <div class="col-md">
+                          <div class="form-label">Avg rating:</div>
+                          <ul class="list-inline rating-list" id="averageRatingDisplay">
+                              <!-- Dynamic rating stars will be inserted here by JavaScript -->
+                          </ul>
+                        </div>
+                      </div>
+                      <h3 class="card-title mt-4">Feedback Area</h3>
+                      <p class="card-subtitle">This description will be public to the client, make sure to provide details.</p>
+                      <div>
+                        <div class="row g-5">
+                          <div class="col-1">
+                            <textarea type="text" class="form-control w-auto" value="paweluna@howstuffworks.com" name="feed"></textarea>
+                          </div>
+                          <!-- <div class="col-auto">
+                              <a href="#" class="btn">
+                              Change
+                            </a>
+                          </div> -->
+                        </div>
+                      </div>
+                      <!-- <h3 class="card-title mt-4">Pricing</h3>
+                      <p class="card-subtitle">Select a Price according to your Quantity.</p>
+                      <div>
+                          <div class="row g-3">
+                              <div class="col-md">
+                                  <div class="form-label">Price</div>
+                                  <input type="text" class="form-control" value="Tabler">
+                              </div>
+                              
+                              <div class="col-md">
+                                  <div class="form-label">Per Quantity</div>
+                                  <select class="form-select" aria-label="Default select example">
+                                      <option selected>Open this select menu</option>
+                                      <option value="100 g">100 g</option>
+                                      <option value="200 g">200 g</option>
+                                      <option value="500 g">500 g</option>
+                                      <option value="1 kg">1 kg</option>
+                                      <option value="2 kg">2 kg</option>
+                                    </select>
+                              </div>
+                          </div>
+                      </div> -->
+                      <!-- <h3 class="card-title mt-4">Public profile</h3>
+                      <p class="card-subtitle">Making your profile public means that anyone on the Dashkit network will be able to find
+                        you.</p>
+                      <div>
+                        <label class="form-check form-switch form-switch-lg">
+                          <input class="form-check-input" type="checkbox" >
+                          <span class="form-check-label form-check-label-on">You're currently visible</span>
+                          <span class="form-check-label form-check-label-off">You're
+                            currently invisible</span>
+                        </label>
+                      </div>-->
+                    </div> 
+                    <div class="card-footer bg-transparent mt-auto">
+                      <div class="btn-list justify-content-end">
+                        <a href="#" class="btn">
+                          Cancel
+                        </a>
+                        <input href="#" class="btn btn-primary" type="Submit" />
                       </div>
                     </div>
-                    <!-- <h3 class="card-title mt-4">Pricing</h3>
-                    <p class="card-subtitle">Select a Price according to your Quantity.</p>
-                    <div>
-                        <div class="row g-3">
-                            <div class="col-md">
-                                <div class="form-label">Price</div>
-                                <input type="text" class="form-control" value="Tabler">
-                            </div>
-                            
-                            <div class="col-md">
-                                <div class="form-label">Per Quantity</div>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option selected>Open this select menu</option>
-                                    <option value="100 g">100 g</option>
-                                    <option value="200 g">200 g</option>
-                                    <option value="500 g">500 g</option>
-                                    <option value="1 kg">1 kg</option>
-                                    <option value="2 kg">2 kg</option>
-                                  </select>
-                            </div>
-                        </div>
-                    </div> -->
-                    <!-- <h3 class="card-title mt-4">Public profile</h3>
-                    <p class="card-subtitle">Making your profile public means that anyone on the Dashkit network will be able to find
-                      you.</p>
-                    <div>
-                      <label class="form-check form-switch form-switch-lg">
-                        <input class="form-check-input" type="checkbox" >
-                        <span class="form-check-label form-check-label-on">You're currently visible</span>
-                        <span class="form-check-label form-check-label-off">You're
-                          currently invisible</span>
-                      </label>
-                    </div>-->
-                  </div> 
-                  <div class="card-footer bg-transparent mt-auto">
-                    <div class="btn-list justify-content-end">
-                      <a href="#" class="btn">
-                        Cancel
-                      </a>
-                      <a href="#" class="btn btn-primary">
-                        Submit
-                      </a>
-                    </div>
-                  </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -488,6 +462,91 @@
           })
           .catch((error) => console.error('Error:', error));
         }
+            // New code to fetch average rating when a product is selected
+        if (dropdownId === 'dropdownMenu2') {
+            fetch('/feedback/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({productName: selectedOption}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Assuming 'data' contains the average_rating
+                displayAverageRating(data.average_rating);
+            })
+            .catch((error) => console.error('Error:', error));
+        }
+// Function to display the average rating
+function displayAverageRating(averageRating) {
+    const ratingList = document.querySelector('.rating-list');
+    ratingList.innerHTML = ''; // Clear existing stars
+
+    // Assuming 5 as the maximum rating
+    for (let i = 1; i <= 5; i++) { // Start from 1 to create stars in correct order
+        const star = document.createElement('i');
+        star.className = 'fa fa-star';
+        star.dataset.rating = i; // Add a data-rating attribute to each star
+        if (i <= averageRating) {
+            star.classList.add('checked'); // Highlight the star if it's within the average rating
+        }
+        ratingList.prepend(star); 
+    }
+}
+
+// Event delegation to handle clicks on stars since they are dynamic
+document.querySelector('.rating-list').addEventListener('click', function(event) {
+  if (event.target.classList.contains('fa-star')) {
+        // Parse the rating value from the clicked star
+        const clickedRating = parseInt(event.target.dataset.rating);
+        
+        // Update the visual state of the stars
+        updateStars(clickedRating);
+
+        // Submit the new rating to the backend
+        submitRating(clickedRating);
+    }
+});
+
+function updateStars(clickedRating) {
+    const stars = document.querySelectorAll('.fa-star');
+
+    // Iterate over the stars and update their checked status
+    stars.forEach(star => {
+        const ratingValue = parseInt(star.dataset.rating);
+        if (ratingValue <= clickedRating) {
+            // Check all stars up to the clicked one
+            star.classList.add('checked');
+        } else {
+            // Uncheck all stars above the clicked one
+            star.classList.remove('checked');
+        }
+    });
+}
+
+function submitRating(rating) {
+    const productName = selections['dropdownMenu2']; // Make sure this value is properly set from your dropdown
+    // Ensure the backend is prepared to handle this new rating properly
+    fetch('/feedback/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'), // Ensure CSRF token is correctly retrieved
+        },
+        body: JSON.stringify({productName: productName, rating: rating}),
+    })
+    .catch(error => console.error('Error submitting rating:', error));
+}
+
+
+
+
+
+
+
+
         function getCookie(name) {
           let cookieValue = null;
           if (document.cookie && document.cookie !== '') {
@@ -503,7 +562,6 @@
           return cookieValue;
         }
       }
-
       </script>
       
   </body>

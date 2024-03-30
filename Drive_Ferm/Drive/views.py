@@ -93,7 +93,7 @@ def logoutt(request):
 
 
 from django.shortcuts import render
-from .models import Business, Cart, PageVisit, ProductPricing, UserAuth
+from .models import Business, Cart, Customer, PageVisit, ProductPricing, Review, UserAuth
 
 def profile_view(request):
     print(request.user)
@@ -144,8 +144,8 @@ def pay(request):
 def create_checkout_session(request):
     # Mocking cart items for testing
     mock_cart_items = [
-        {"product_name": "Product 1", "description": "Description of Product 1", "price": 10.99, "quantity": 2, "image_url": 'https://picsum.photos/200'},
-        {"product_name": "Product 2", "description": "Description of Product 2", "price": 15.99, "quantity": 1, "image_url": 'https://picsum.photos/200'},
+        {"product_name": "HUILE DE COLZA", "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.", "price": 10.99, "quantity": 2, "image_url": 'https://picsum.photos/200'},
+        {"product_name": "LES PÂTES COQUILLETTES", "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.", "price": 15.99, "quantity": 1, "image_url": 'https://picsum.photos/200'},
     ]
     
     # Prepare line items for the payment session
@@ -415,24 +415,61 @@ def add_product(request):
 #     print(selected_option)
 #     return render(request,'feedback.html',{})
 
+from django.http import JsonResponse
+from django.shortcuts import render
+import json
+from .models import Business, Product  # Assuming Rating model exists
+from django.db.models import Avg
+
+@csrf_exempt  # Use with caution and make sure to properly manage CSRF
 def feedback(request):
-    B = Business.objects.all()
+    businesses = Business.objects.all()
+    print(request.user)
+    # costumer = Customer.objects.get(user=request.user)
     if request.method == "POST":
-        # Only attempt to parse the request body for POST requests
         try:
-            if request.body:
-                data = json.loads(request.body)
-                farm_name = data.get('farmName')
-                print(farm_name)
-                # Assuming you have a model relationship where products are linked to farms
-                products = Product.objects.filter(business_name__business_name=farm_name).values_list('product_name', flat=True)
-                print(list(products))
-                return JsonResponse(list(products), safe=False)  # Return a list of product names
+            print(request.body)
+            data = json.loads(request.body)
+            
+            # Handle fetching products for a farm
+            farm_name = data.get('farmName')
+            product_name = data.get('productName')
+            new_rating = data.get('rating')
+            feed = data.get('feed')
+
+            if farm_name and not product_name:
+                products = Product.objects.filter(
+                    business_name__business_name=farm_name
+                ).values_list('product_name', flat=True)
+                return JsonResponse(list(products), safe=False)
+            
+            # Handle fetching average rating for a product
+            if product_name and not farm_name:
+                average_rating = Review.objects.filter(
+                    product__product_name=product_name
+                ).aggregate(Avg('rating'))['rating__avg']
+                return JsonResponse({'average_rating': round(average_rating) if average_rating else 0})
+            
+            
+            print(product_name,new_rating,feed, request.user)
+                    # Retrieve the current business profile
+            costumer = Customer.objects.get(username=request.user.username)
+            print(product_name,new_rating,feed, costumer)
+            # Handle submitting a new rating and feedback
+            if product_name and new_rating and feed:
+                Review.objects.create(
+                    product=Product.objects.get(product_name=product_name),
+                    user=costumer,
+                    review_text=feed,
+                    rating=new_rating
+                )
+                messages.success(request, 'Successfully Sent The Message!')
+                return JsonResponse({'status': 'success'})
+
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     else:
-        return render(request, 'feedback.html', {'farms':B})
-    
+        return render(request, 'feedback.html', {'farms': businesses})
 
 
 
