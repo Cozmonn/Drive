@@ -4,6 +4,7 @@ from django.core.files.storage import default_storage
 import os
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
 import stripe
@@ -74,6 +75,11 @@ def logform(request):
 
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.contrib.auth import get_user_model
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.conf import settings
 
 def register(request):
     if request.method == 'POST':
@@ -82,37 +88,45 @@ def register(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         user_type = request.POST.get('user_type')
-        print(email)
-
-        # Generate a unique username from the first name and last name
+        
+        # Generate a unique username
         username = generate_unique_username(first_name, last_name)
-
-        # Depending on the user_type, create a Customer or Business instance
-        if user_type == 'Client':
+        
+        User = get_user_model()
+        user = None
+        
+        # Create user instance based on user_type
+        if user_type in ['Client', 'Business']:
+            if user_type == 'Client':
+                # Assuming Customer and Business models inherit from User model
+                # and have a create_user method.
+                user = Customer.objects.create_user(
+                    username=username, email=email, password=password,
+                    first_name=first_name, last_name=last_name)
+            elif user_type == 'Business':
+                user = Business.objects.create_user(
+                    username=username, email=email, password=password,
+                    first_name=first_name, last_name=last_name)
             
-            Customer.objects.create_user(
-            username=email,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name
-        )
-            messages.success(request, "Client account created successfully!")
-        elif user_type == 'Business':
-            Business.objects.create_user(
-            username=email,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name
-        )
-            messages.success(request, "Business account created successfully!")
+            # Common success message
+            messages.success(request, f"{user_type} account created successfully!")
         else:
             messages.error(request, "Invalid user type selected.")
+            return render(request, 'signup.html')
         
-        return redirect('login')  # Redirect to a home or another target page after creation
+        # Send email confirmation if a user was created
+        if user:
+            send_mail(
+                subject='Welcome to Our Site!',
+                message=f'Hi {first_name}, your account has been successfully created. Your username is {username}.',
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+        
+        return redirect('login')  # Redirect after successful account creation
     
-    return render(request, 'signup.html')  # Path to your signup template if GET request
+    return render(request, 'signup.html')
 
 
 def logoutt(request):

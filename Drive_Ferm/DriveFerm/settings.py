@@ -140,3 +140,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STRIPE_PUBLIC_KEY = "pk_test_51Oys1fINURbXn45vfRo2VRsy1pdsGDzylVxEZ2zbxkvgRzMODZa11Uh3vzd0jN1uUhJGa31Ur0sUPl67d5dXHefF00skpxD6mb"
 STRIPE_SECRET_KEY = "sk_test_51Oys1fINURbXn45vLPJuNvQjfSdJZ7DT0SPAT9lg8y6jkWBxqcR2R4mghBHFgVQTIqrWZPCnevHKS3ro9hUwb1gJ00mLkdeAvd"
 STRIPE_WEBHOOK_SECRET = ""
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'n.nadifi@outlook.com'
+EMAIL_HOST_PASSWORD = 'Nadir2002'
+EMAIL_USE_TLS = True
