@@ -29,6 +29,24 @@
       body {
       	font-feature-settings: "cv03", "cv04", "cv11";
       }
+      .rating-list li {
+          float: right;
+          color: #ddd;
+          padding: 10px 5px;
+        }
+
+        .rating-list li:hover,
+        .rating-list li:hover ~ li {
+          color: orange;
+        }
+
+        .rating-list {
+          display: inline-block;
+          list-style: none;
+        }
+        .checked {
+            color: orange;
+        }
     </style>
   </head>
   <body >
@@ -282,37 +300,39 @@
                                 <!-- <th class="w-1">No.
                                   <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>
                                 </th> -->
-                                <th>Figuring</th>
-                                <th>Farm</th>
-                                <th>Group</th>
+                                <th>username</th>
+                                <th>Location</th>
                                 <th>Created</th>
-                                <th>Price</th>
-                                <th>Action</th>
+                                <th>Product</th>
+                                <th>Review txt</th>
+                                <th>Rating</th>
                               </tr>
                             </thead>
                             <tbody>
+                                {% for feed in feedback_list%}
                               <tr>
                                 <!-- <td><span class="text-muted">001401</span></td> -->
-                                <td><span class="avatar avatar-s" style="background-image: url('./image_67178497 (1).JPG')"></span>
-                                    
-                                </td>
                                 <td>
                                     <span class="flag flag-country-fr"></span>
-                                    Whispering Farm
+                                    {{ feed.user.username }}
                                 </td>
                                 <td>
-                                  Group Name
+                                    {{ feed.user.shipping_address }}
                                 </td>
                                 <td>
-                                  15 Dec 2017
+                                    {{ feed.review_date }}
                                 </td>
-                                <td>$887</td>
+                                <td>{{ feed.product }}</td>
+                                <th>{{ feed.review_text }}</th>
                                 <td>
-                                    <button class="btn btn-outline-danger"><i class="fa-regular fa-pen-to-square"></i></button>
-                                    <button class="btn btn-outline-success"><i class="fa-regular fa-trash-can"></i></button>
+                                    <span class="fa fa-star {% if feed.rating > 0 %} checked {% endif %}"></span>
+                                    <span class="fa fa-star {% if feed.rating > 1 %} checked {% endif %}"></span>
+                                    <span class="fa fa-star {% if feed.rating > 2 %} checked {% endif %}"></span>
+                                    <span class="fa fa-star {% if feed.rating > 3 %} checked {% endif %}"></span>
+                                    <span class="fa fa-star {% if feed.rating > 4 %} checked {% endif %}"></span>
                                 </td>
                               </tr>
-                              
+                              {% endfor %}
                             </tbody>
                           </table>
                         </div>

@@ -245,9 +245,11 @@
                       <div class="row align-items-center">
                         <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url('{{ profile_picture_url }}')"></span>
                         </div>
-                        <div class="col-auto"><a href="#" class="btn">
-                            Change avatar
-                          </a></div>
+                        <div class="col-auto">
+                          <input type="file" id="photo" name="photo" style="display: none;" accept="image/*">
+                          <button type="button" class="btn" id="change-photo-btn">Change Photo</button>
+                          </input>
+                        </div>
                         <div class="col-auto"><a href="#" class="btn btn-ghost-danger">
                             Delete avatar
                           </a></div>

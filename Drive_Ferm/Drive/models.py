@@ -3,7 +3,6 @@ from uuid import UUID
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
-
 from .functions import generate_initial_image
 # Create your models here.
 
@@ -49,13 +48,31 @@ class Customer(UserAuth):
         verbose_name_plural = "Customer"
     # No need to redefine uuid or username since they're inherited from UserAuth
 
+
+class Farm(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField()
+    gallery = models.ImageField(upload_to='profile_images/', null=True, blank=True)
+    founded_date = models.DateField(verbose_name="Date Founded")
+    founders = models.CharField(max_length=255, help_text="Comma-separated list of founders' names")
+    location = models.CharField(max_length=255, help_text="Location of the farm")
+    number_of_employees = models.IntegerField(verbose_name="Number of Employees", help_text="How many people work at the farm")
+    email = models.CharField(max_length=255, null=True, blank=True)
+    phonen = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name_plural = "Farms"
+
+
     
 
 class Business(UserAuth):
-    business_name = models.CharField(max_length=255)
-    business_id = models.CharField(max_length=100, unique=True)
     location = models.CharField(max_length=255)
     business_phone_number = models.CharField(max_length=20)
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         creating = not self.pk
@@ -66,21 +83,13 @@ class Business(UserAuth):
             self.profile_image.save(file_name, content_file, save=True)
     class Meta:
         verbose_name_plural = "Business"
-    
-    def __str__(self):
-        return self.business_name
-
-
-
-class Drive(models.Model):
-    Drive_name = models.CharField(max_length=100)
 
 
 class Product(models.Model):
     product_name = models.CharField(max_length=255)
     description = models.TextField()
     quantity_in_stock = models.PositiveIntegerField()
-    business_name = models.ForeignKey(Business, on_delete=models.CASCADE)
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, null=True, blank=True)
     image = models.ImageField(upload_to='product_images/',null=True, blank=True)  # Specify a path for image uploads
 
     def __str__(self):
@@ -129,6 +138,7 @@ class Review(models.Model):
         ]
                                          )
     review_date = models.DateTimeField(auto_now_add=True)
+
 class PageVisit(models.Model):
     path = models.CharField(max_length=200)
     day_offset = models.IntegerField(default=0)
@@ -139,3 +149,30 @@ class PageVisit(models.Model):
 
     def __str__(self):
         return f"{self.path} - Day Offset: {self.day_offset} - {self.visit_count} Visits"
+    
+class WebContent(models.Model):
+    title = models.CharField(max_length=1000)
+    html_content = models.TextField("HTML Content")
+
+    def __str__(self):
+        return self.title
+    
+class Event(models.Model):
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='events')
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    activity_icon = models.ForeignKey(WebContent, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['created_at']
+        verbose_name_plural = "Events"
+
+
+class Gallery(models.Model):
+    event = models.ForeignKey(Event, related_name='galleries', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profile_images/')

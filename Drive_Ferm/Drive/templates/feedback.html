@@ -290,8 +290,8 @@
                               </a>
                               <div class="dropdown-menu" id="dropdownMenu1">
                                 {% for farm in farms %}
-                                  <a class="dropdown-item" onclick="sendSelectionToBackend('{{ farm.business_name }}', 'dropdownMenu1')">
-                                    {{ farm.business_name }}
+                                  <a class="dropdown-item" onclick="sendSelectionToBackend('{{ farm.name }}', 'dropdownMenu1')">
+                                    {{ farm.name }}
                                   </a>
                                 {% endfor %}
                               </div>

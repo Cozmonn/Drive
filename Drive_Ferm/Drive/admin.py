@@ -1,9 +1,9 @@
 
 from django.contrib.auth.admin import UserAdmin
-from .models import PageVisit, UserAuth
+from .models import Event, Farm, Gallery, PageVisit, UserAuth, WebContent
 # Register your models here.
 from django.contrib import admin
-from .models import Business, Customer, ProductPricing, UserAuth, Drive, Product, Cart, Review
+from .models import Business, Customer, ProductPricing, UserAuth, Product, Cart, Review
 
 
 
@@ -12,15 +12,14 @@ class ProductPricingAdmin(admin.ModelAdmin):
 
 admin.site.register(UserAuth, UserAdmin)
 admin.site.register(Customer)
-
-class BusinessAdmin(admin.ModelAdmin):
-    list_display = ('username', 'business_name', 'business_id')
-admin.site.register(Business,BusinessAdmin)
-
-admin.site.register(Drive)
+admin.site.register(Business)
 admin.site.register(ProductPricing,ProductPricingAdmin)
 admin.site.register(Product)
+admin.site.register(Farm)
+admin.site.register(Event)
 # admin.site.register(Order)
 admin.site.register(Cart)
 admin.site.register(Review)
 admin.site.register(PageVisit)
+admin.site.register(WebContent)
+admin.site.register(Gallery)

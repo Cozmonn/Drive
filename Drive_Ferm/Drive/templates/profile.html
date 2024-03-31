@@ -7,6 +7,7 @@
 * Copyright 2018-2023 codecalm.net Paweł Kuna
 * Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
 -->
+{% load humanize %}
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
@@ -19,6 +20,12 @@
     <link href="../../static/dist/css/tabler-payments.min.css?1684106062" rel="stylesheet"/>
     <link href="../../static/dist/css/tabler-vendors.min.css?1684106062" rel="stylesheet"/>
     <link href="../../static/dist/css/demo.min.css?1684106062" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="stylesheet" href="dist/css/lightbox.min.css">
+    <script src="/path/to/cdn/jquery.min.js"></script>
+    <script src="dist/js/lightbox.js"></script>
+        
     <style>
       @import url('https://rsms.me/inter/inter.css');
       :root {
@@ -142,10 +149,10 @@
             </div>
             <div class="nav-item dropdown">
               <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
-                <span class="avatar avatar-sm" style="background-image: url(./static/avatars/000m.jpg)"></span>
+                <span class="avatar avatar-sm" style="background-image: url('{{ profile_picture_url }}')"></span>
                 <div class="d-none d-xl-block ps-2">
-                  <div>Username</div>
-                  <div class="mt-1 small text-muted">Farm : xxx Groupe</div>
+                  <div>{{ profile.username }}</div>
+                  <div class="mt-1 small text-muted">{{ farm.name }}</div>
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
@@ -198,7 +205,7 @@
                     <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
                       <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-fence"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 12v4h16v-4z" /><path d="M6 16v4h4v-4m0 -4v-6l-2 -2l-2 2v6" /><path d="M14 16v4h4v-4m0 -4v-6l-2 -2l-2 2v6" /></svg>                    </span>
                     <span class="nav-link-title">
-                      Farm - Ferme des Lumières
+                      Farm - {{ farm.name }}
                     </span>
                   </a>
                 </li>
@@ -223,23 +230,22 @@
           <div class="container">
             <div class="row align-items-center">
               <div class="col-auto">
-                <span class="avatar avatar-lg rounded" style="background-image: url(../../static/DSCF7435-11_1500x1000_crop_center.webp)"></span>
+                <span class="avatar avatar-lg rounded" style="background-image: url('{{ farm_picture_url }}')"></span>
               </div>
               <div class="col">
-                <h1 class="fw-bold">Ferme des Lumières - Business Name</h1>
+                  <h1 class="fw-bold">{{ farm.name }}</h1>
                 <div class="my-2">Produit des légumes bio, des fruits et des produits laitiers frais.</div>
                 <div class="list-inline list-inline-dots text-muted">
                   <div class="list-inline-item">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7l6 -3l6 3l6 -3l0 13l-6 3l-6 -3l-6 3l0 -13" /><path d="M9 4l0 13" /><path d="M15 7l0 13" /></svg>
-                    Située près de Sarlat-la-Canéda, Dordogne.
+                    Située à {{ farm.location }}.
                   </div>
                   <div class="list-inline-item">
                     <svg xmlns="www.w3.org/2000/svg" class="icon icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" /><path d="M3 7l9 6l9 -6" /></svg>
                     <a href="#" class="text-reset">contact@fermedeslumieres.com</a>
                   </div>
                   <div class="list-inline-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM15 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM12 11V5M18 9h-6V5L12 11zM6 13a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" /></svg>
-                    Entreprise familiale depuis 1995.
+                    <a href="{% url 'change-farn' %}" class="text-secondary" ><i class="fas fa-edit"></i></a>
                   </div>
                 </div>
               </div>
@@ -252,166 +258,103 @@
             <div class="row g-3">
               <div class="col">
                 <ul class="timeline">
+                  {% for event in events %}
                   <li class="timeline-event">
                     <div class="timeline-event-icon bg-twitter-lt"><!-- Download SVG icon from http://tabler-icons.io/i/brand-twitter -->
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c0 -.249 1.51 -2.772 1.818 -4.013z" /></svg>
+                      {{ event.activity_icon.html_content|safe }}
                     </div>
                     <div class="card timeline-event-card">
                       <div class="card-body">
-                        <div class="text-muted float-end">10 hrs ago</div>
-                        <h4>+1150 Followers</h4>
-                        <p class="text-muted">You’re getting more and more followers, keep it up!</p>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="timeline-event">
-                    <div class="timeline-event-icon"><!-- Download SVG icon from http://tabler-icons.io/i/briefcase -->
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" /><path d="M12 12l0 .01" /><path d="M3 13a20 20 0 0 0 18 0" /></svg>
-                    </div>
-                    <div class="card timeline-event-card">
-                      <div class="card-body">
-                        <div class="text-muted float-end">2 hrs ago</div>
-                        <h4>+3 New Products were added!</h4>
-                        <p class="text-muted">Congratulations!</p>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="timeline-event">
-                    <div class="timeline-event-icon"><!-- Download SVG icon from http://tabler-icons.io/i/check -->
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
-                    </div>
-                    <div class="card timeline-event-card">
-                      <div class="card-body">
-                        <div class="text-muted float-end">1 day ago</div>
-                        <h4>Database backup completed!</h4>
-                        <p class="text-muted">Download the <a href="#">latest backup</a>.</p>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="timeline-event">
-                    <div class="timeline-event-icon bg-facebook-lt"><!-- Download SVG icon from http://tabler-icons.io/i/brand-facebook -->
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3" /></svg>
-                    </div>
-                    <div class="card timeline-event-card">
-                      <div class="card-body">
-                        <div class="text-muted float-end">1 day ago</div>
-                        <h4>+290 Page Likes</h4>
-                        <p class="text-muted">This is great, keep it up!</p>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="timeline-event">
-                    <div class="timeline-event-icon"><!-- Download SVG icon from http://tabler-icons.io/i/user-plus -->
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg>
-                    </div>
-                    <div class="card timeline-event-card">
-                      <div class="card-body">
-                        <div class="text-muted float-end">2 days ago</div>
-                        <h4>+3 Friend Requests</h4>
+                        <div class="text-muted float-end">{{ event.created_at|naturaltime }}
+                        </div>
+                        <h4>{{ event.name }}</h4>
+                        <p class="text-muted">{{ event.description }}</p>
                         <div class="avatar-list mt-3">
-                          <span class="avatar" style="background-image: url(./static/avatars/000m.jpg)">
-                            <span class="badge bg-success"></span></span>
-                          <span class="avatar">
-                            <span class="badge bg-success"></span>JL</span>
-                          <span class="avatar" style="background-image: url(./static/avatars/002m.jpg)">
-                            <span class="badge bg-success"></span></span>
+                          {% if event.galleries.all.exists %}
+                            {% for gallery in event.galleries.all %}
+                                <!-- Each image wrapped in an anchor tag that points to the original image. -->
+                                <a href="{{ gallery.image.url }}" data-lightbox="event-gallery-{{ event.id }}" data-title="{{ event.name }}">
+                                    <span class="avatar" style="background-image: url('{{ gallery.image.url }}')">
+                                        <span class="badge bg-success"></span>
+                                    </span>
+                                </a>
+                            {% endfor %}
+                          {% endif %}
+                        </div>
+                        <div class="col-auto pt-2">
+                          <a href="{% url 'change' event.id %}" class="btn">
+                            <i class="fas fa-edit"></i>
+                          </a>
+                          <button class="btn btn-outline-danger" onclick="deleteEvent('{{ event.id }}'); return false;">
+                            <i class="fa-regular fa-trash-can"></i>
+                          </button>
                         </div>
                       </div>
                     </div>
                   </li>
-                  <li class="timeline-event">
-                    <div class="timeline-event-icon"><!-- Download SVG icon from http://tabler-icons.io/i/photo -->
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 8h.01" /><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z" /><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5" /><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3" /></svg>
-                    </div>
-                    <div class="card timeline-event-card">
-                      <div class="card-body">
-                        <div class="text-muted float-end">3 days ago</div>
-                        <h4>+2 New photos</h4>
-                        <div class="mt-3">
-                          <div class="row g-2">
-                            <div class="col-6">
-                              <div class="media media-2x1 rounded">
-                                <a class="media-content" style="background-image: url(./static/photos/blue-sofa-with-pillows-in-a-designer-living-room-interior.jpg
-)"></a>
-                              </div>
-                            </div>
-                            <div class="col-6">
-                              <div class="media media-2x1 rounded">
-                                <a class="media-content" style="background-image: url(./static/photos/home-office-desk-with-macbook-iphone-calendar-watch-and-organizer.jpg
-)"></a>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="timeline-event">
-                    <div class="timeline-event-icon"><!-- Download SVG icon from http://tabler-icons.io/i/settings -->
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
-                    </div>
-                    <div class="card timeline-event-card">
-                      <div class="card-body">
-                        <div class="text-muted float-end">2 weeks ago</div>
-                        <h4>System updated to v2.02</h4>
-                        <p class="text-muted">Check the complete changelog at the <a href="#">activity
-                            page</a>.</p>
-                      </div>
-                    </div>
-                  </li>
+                  {% empty %}
+                  <li class="timeline-event">No events found.</li>
+                  {% endfor %}
                 </ul>
               </div>
               <div class="col-lg-4">
                 <div class="row row-cards">
-                  <div class="col-12">
-                    <div class="card">
-                      <div class="card-body">
-                        <div class="card-title">Farm Organisation:</div>
-                        <div class="mb-2">
-                          <!-- Download SVG icon from http://tabler-icons.io/i/book -->
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>
-                          Établie à : <strong>Vallées de la Dordogne, France</strong>
-                        </div>
-                        <div class="mb-2">
-                          <!-- Download SVG icon from http://tabler-icons.io/i/briefcase -->
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" /><path d="M12 12l0 .01" /><path d="M3 13a20 20 0 0 0 18 0" /></svg>
-                          Gérée par : <strong>Innovations Agricoles</strong>
-                        </div>
-                        <div class="mb-2">
-                          <!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
-                          Située à :  <strong>Sarlat-la-Canéda, Périgord Noir, France</strong>
-                        </div>
-                        <div class="mb-2">
-                          <!-- Download SVG icon from http://tabler-icons.io/i/map-pin -->
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>
-                          Origine: <strong><span class="flag flag-country-si"></span>
-                            Familiale depuis 1985</strong>
-                        </div>
-                        <div class="mb-2">
-                          <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
-                          Date de fondation :  <strong>13/01/1985</strong>
-                        </div>
-                        <div>
-                          <!-- Download SVG icon from http://tabler-icons.io/i/clock -->
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 7v5l3 3" /></svg>
-                          Fuseau horaire :  <strong>Europe/Ljubljana</strong>
+                    <div class="col-12">
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="card-title">Farm Organisation:</div>
+                          <div class="mb-2">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/book -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>
+                            Établie à : <strong>Vallées de la Dordogne, France</strong>
+                          </div>
+                          <div class="mb-2">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/briefcase -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" /><path d="M12 12l0 .01" /><path d="M3 13a20 20 0 0 0 18 0" /></svg>
+                            Gérée par : <strong>{{ farm.founders }}</strong>
+                          </div>
+                          <div class="mb-2">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
+                            Située à :  <strong>{{ farm.location }}</strong>
+                          </div>
+                          <div class="mb-2">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/map-pin -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>
+                            Origine: <strong><span class="flag flag-country-fr"></span>
+                              Familiale depuis {{ farm.founded_date|date:"Y" }} </strong>
+                          </div>
+                          <div class="mb-2">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M11 15h1" /><path d="M12 15v3" /></svg>
+                            Date de fondation :  <strong>{{ farm.founded_date }}</strong>
+                          </div>
+                          <div>
+                            <!-- Download SVG icon from http://tabler-icons.io/i/clock -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2 text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 7v5l3 3" /></svg>
+                            Fuseau horaire :  <strong>Europe/Hauts-de-France</strong>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                    <div class="col-12">
+                      <div class="card">
+                        <div class="card-body">
+                          <h2 class="card-title">Description :</h2>
+                          <div>
+                            <p>
+                              {{ farm.description }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   <div class="col-12">
                     <div class="card">
                       <div class="card-body">
-                        <h2 class="card-title">About Me</h2>
-                        <div>
-                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium aliquid beatae eaque eius
-                            esse fugit, hic id illo itaque modi molestias nemo perferendis quae rerum soluta. Blanditiis
-                            laborum minima molestiae molestias nemo nesciunt nisi pariatur quae sapiente ut. Aut consectetur
-                            doloremque, error impedit, ipsum labore laboriosam minima non omnis perspiciatis possimus
-                            praesentium provident quo recusandae suscipit tempore totam.
-                          </p>
+                        <h2 class="card-title">Actions :</h2>
+                        <div class="btn-list justify-content-center">
+                          <a class="btn">Ajouter un event!</a>
                         </div>
                       </div>
                     </div>
@@ -427,5 +370,24 @@
     <!-- Tabler Core -->
     <script src="../../static/dist/js/tabler.min.js?1684106062" defer></script>
     <script src="../../static/dist/js/demo.min.js?1684106062" defer></script>
+    <script>
+      function deleteEvent(eventId) {
+          if (confirm('Are you sure?')) {
+              fetch("{% url 'delete_event' 123 %}".replace('123', eventId), {
+                  method: 'POST',
+                  headers: {
+                      'X-CSRFToken': '{{ csrf_token }}',
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({'eventId': eventId})
+              })
+              .then(response => {
+                  if (response.ok) {
+                      window.location.reload(true);  // Reload the page to reflect changes
+                    }
+              });
+          }
+      }
+      </script>
   </body>
 </html>

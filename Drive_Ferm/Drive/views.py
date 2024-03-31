@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.contrib.auth import update_session_auth_hash
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
@@ -31,14 +31,31 @@ def productListing(request):
 def contactUs(request):
     return render(request, "contactuS.html")
 
+def show_events(request):
+    # Fetch all events or use filters as needed
+    profile = get_object_or_404(Business, username=request.user.username)
+    profile_picture_url = request.build_absolute_uri(profile.profile_image.url) if profile.profile_image else None
+    farm = profile.farm
+    farm_picture_url = request.build_absolute_uri(farm.gallery.url) if farm.gallery else None
+    events = Event.objects.filter(farm=farm).order_by('-created_at')
+    return render(request, 'profile.html', {'events': events, 'farm': farm, 'profile':profile, 'profile_picture_url': profile_picture_url, 'farm_picture_url':farm_picture_url})
 
-
-
+def delete_event(request, pk):
+    if request.method == 'POST':  # Ensures this view can only be accessed via POST request
+        print('hihihihii')
+        event = Event.objects.get(id=pk)
+        event.delete()
+        messages.success(request, 'Event deleted successfully.')
+        return redirect('events_list')  # Redirect to the view that shows the list of events
+    else:
+        messages.error(request, 'Invalid request.')
+        return redirect('profile')
+    
 # Create your views here.
 from distutils.log import error
 import email
 
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages, auth
@@ -49,7 +66,44 @@ from .form import SignInForm, EditProfileForm
 
 
 # Create your views here.
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpRequest
+from .models import Event, Gallery
+from django.contrib import messages
 
+@csrf_exempt
+def update_event(request: HttpRequest, pk: int):
+    event = get_object_or_404(Event, id=pk)
+    
+    if request.method == 'POST':
+        name = request.POST.get('title')
+        description = request.POST.get('description')
+        
+        # Update event details
+        event.name = name
+        event.description = description
+        event.save()
+
+        # Handle photo uploads
+        images = request.FILES.getlist('files')  # Assuming the input field name is 'images'
+
+        if images:
+            # If new images are uploaded, delete old images
+            event.galleries.all().delete()
+
+            # Save new images
+            for image in images:
+                Gallery.objects.create(event=event, image=image)
+
+            messages.success(request, 'Event and photos updated successfully!')
+        else:
+            messages.success(request, 'Event updated successfully!')
+        
+        return redirect('profile')
+    
+    # Render the event update form
+    icons = Event.objects.all().distinct()
+    return render(request, 'update-event.html', {'event': event, 'icons':icons})
 
 #login_view
 
@@ -133,21 +187,6 @@ def logoutt(request):
     logout(request)
     messages.success(request, ("Logging Out Successfully"))
     return redirect('login')
-
-
-
-from django.shortcuts import render
-from .models import Business, Cart, Customer, PageVisit, ProductPricing, Review, UserAuth
-
-def profile_view(request):
-    print(request.user)
-    profile = UserAuth.objects.get(username=request.user)
-    print(profile.profile_image.url)
-    context = {'profile': profile}
-    return render(request, 'client-view.html', context)
-
-
-
 
 # def create_checkout_session(request):
 #     # Récupérer les produits du panier de l'utilisateur
@@ -389,6 +428,49 @@ def update_business(request):
 
     return render(request, 'settings.html', {'profile': profile, 'profile_picture_url': profile_picture_url})  # Replace 'update_business.html' with your template path
 
+@csrf_exempt
+def update_farm(request):
+
+    profile = get_object_or_404(Business, username=request.user.username)
+    farm = profile.farm
+    profile_picture_url = request.build_absolute_uri(farm.gallery.url) if farm.gallery else None
+
+    if request.method == 'POST':
+        farm.name = request.POST.get('name')
+        farm.description = request.POST.get('description')
+        farm.founded_date = request.POST.get('founded_date')
+        farm.founders = request.POST.get('founders')
+        farm.location = request.POST.get('location')
+        farm.number_of_employees = int(request.POST.get('number_of_employees'))
+        farm.email = request.POST.get('email')
+        farm.phonen = request.POST.get('phonen')
+
+               # Handle profile picture upload
+        if 'gallery' in request.FILES:
+            photo = request.FILES['gallery']
+            # Delete old image if it exists
+            if farm.gallery:
+                farm.gallery.delete(save=False)  # Deletes the file and not the model instance
+            
+            # Save new image
+            farm.gallery.save(photo.name, photo, save=False)
+
+        farm.save()
+        messages.success(request, 'Farm updated successfully!')
+        return redirect('profile')  # Redirect to a farm detail view or similar
+
+    # Render the farm update form with farm instance
+    return render(request, 'farm-update.html', {'farm': farm, 'profile_picture_url': profile_picture_url})
+
+
+
+
+
+
+
+
+
+
 
 def delete_profile_picture(request):
     profile = Customer.objects.get(username=request.user.username)
@@ -409,7 +491,7 @@ def delete_profile_picture(request):
 ################# -------New Product------- #################
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Product  # Import your Product model
+from .models import Customer, Event, Farm, Gallery, PageVisit, Product, ProductPricing, Review, WebContent  # Import your Product model
 
 
 @csrf_exempt
@@ -422,10 +504,7 @@ def add_product(request):
         quantity_in_stock = request.POST['quantity_in_stock']
         description = request.POST['description']
         image = request.FILES.get('image')
-        print("Farm Name:", farm_name)
-        print("Product Name:", product_name)
-        print("Quantity in Stock:", quantity_in_stock)
-        print("Description:", description)
+
         
         prices = request.POST.getlist('price[]')
         quantities = request.POST.getlist('quantity[]')
@@ -502,8 +581,7 @@ from django.db.models import Avg
 
 @csrf_exempt  # Use with caution and make sure to properly manage CSRF
 def feedback(request):
-    businesses = Business.objects.all()
-    print(request.user)
+    farming = Farm.objects.all()
     # costumer = Customer.objects.get(user=request.user)
     if request.method == "POST":
         try:
@@ -517,7 +595,7 @@ def feedback(request):
 
             if farm_name and not product_name:
                 products = Product.objects.filter(
-                    business_name__business_name=farm_name
+                    farm__name=farm_name
                 ).values_list('product_name', flat=True)
                 return JsonResponse(list(products), safe=False)
             
@@ -545,7 +623,7 @@ def feedback(request):
             return JsonResponse({'error': str(e)}, status=500)
     else:
         # GET request handling here
-        return render(request, 'feedback.html', {'farms': businesses})
+        return render(request, 'feedback.html', {'farms': farming})
 
     # Default response if none of the conditions are met
     return JsonResponse({'message': 'Your request was received, but no action was taken. Please check your request format and try again.'})
@@ -565,3 +643,81 @@ def dashboard_view(request):
     }
     return render(request, 'testing.html', context)
     
+@csrf_exempt
+def eventupload(request):
+    first_farm = Farm.objects.first()
+    
+    if request.method == 'POST':
+        title = request.POST.get('Title')
+        
+        # Fetch the WebContent instance based on the title received from the form
+        activity_icon_title = request.POST.get('activity_icon')
+        try:
+            activity_icon = WebContent.objects.get(title=activity_icon_title)
+        except WebContent.DoesNotExist:
+            activity_icon = None
+            messages.error(request, 'Invalid activity icon selected.')
+            return render(request, 'event.html')  # Assuming you want to stop processing and show the form again
+
+        description = request.POST.get('feed')
+        
+        # IMPORTANT: Use getlist to handle multiple files
+        images = request.FILES.getlist('files')  # Use 'files' without brackets and ensure this matches your form's input name
+        
+        # Validate form inputs
+        if not title:
+            messages.error(request, 'Title is required.')
+        elif not activity_icon:
+            messages.error(request, 'An icon must be selected.')
+        elif not description:
+            messages.error(request, 'Description is required.')
+        elif not images:
+            messages.error(request, 'At least one image is required.')
+        else:
+            # Create the event
+            ev = Event.objects.create(
+                farm=first_farm,
+                name=title,
+                description=description,
+                activity_icon=activity_icon
+            )
+            
+            # Associate uploaded images with the event
+            for image in images:  # Now 'images' is correctly a list of UploadedFile objects
+                Gallery.objects.create(event=ev, image=image)
+
+            messages.success(request, 'Event created successfully!')
+            return redirect('profile')  # Adjust the redirection as needed
+    
+    # Fetch icons for the select dropdown
+    icons = Event.objects.all().distinct()# Assuming you want to list WebContent objects as icons
+    return render(request, 'event.html', {'events': icons})
+
+
+
+def display_feedback(request):
+    # Fetch the farm associated with the current user
+    try:
+        profile = get_object_or_404(Business, username=request.user.username)
+        farm = profile.farm
+    except farm.DoesNotExist:
+        farm = None
+    
+    feedback_list = []
+    if farm:
+        # Fetch all feedback for products of this farm
+        feedback_list = Review.objects.filter(product__farm=farm).select_related('product').order_by('-review_date')
+        feedback_user = Review.objects.select_related('user__userauth_ptr').all().order_by('-review_date')
+
+
+
+        unique_users = set(feedback.user for feedback in feedback_user)
+        user_profile_urls = {}
+
+        for user in unique_users:
+            if user.profile_image:
+                user_profile_urls[user.uuid] = request.build_absolute_uri(user.profile_image.url)
+            else:
+                user_profile_urls[user.uuid] = None  # Or the URL to a default image
+    
+    return render(request, 'feedback_list.html', {'feedback_list': feedback_list, 'user_profile_urls': user_profile_urls,})
