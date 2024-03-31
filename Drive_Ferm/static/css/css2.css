@@ -13,7 +13,7 @@
     box-shadow: 0 1.25em 1em -.5em #0005;
 }
 #mydiv{    
-    background-image: url('../../Drive/templates/Marche-halle-Ferme-Viltain-vue-exterieure-800x600_visuel_large.jpg');
+    background-image: url('../Marche-halle-Ferme-Viltain-vue-exterieure-800x600_visuel_large.jpg');
     z-index: 99;
     background-repeat: no-repeat;
     background-size: cover;

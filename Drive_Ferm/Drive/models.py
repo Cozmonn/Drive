@@ -3,11 +3,14 @@ from uuid import UUID
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
+
+from .functions import generate_initial_image
 # Create your models here.
 
 class UserAuth(AbstractUser):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
+    status = models.IntegerField(default=0)
     # Uncomment and use the below line if you decide to use profile images
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
         # Overriding the groups and user_permissions fields to set a new related_name
@@ -35,18 +38,32 @@ class Customer(UserAuth):
     registration_date = models.DateTimeField(auto_now_add=True)
     last_login_date = models.DateTimeField(null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        creating = not self.pk
+        super().save(*args, **kwargs)  # Save to get a primary key if creating
+        
+        if creating:
+            content_file, file_name = generate_initial_image(self.username)
+            self.profile_image.save(file_name, content_file, save=True)
     class Meta:
         verbose_name_plural = "Customer"
     # No need to redefine uuid or username since they're inherited from UserAuth
+
+    
 
 class Business(UserAuth):
     business_name = models.CharField(max_length=255)
     business_id = models.CharField(max_length=100, unique=True)
     location = models.CharField(max_length=255)
-    # Consider not duplicating the email field; use the one from UserAuth
-    # business_email = models.EmailField(unique=True)
     business_phone_number = models.CharField(max_length=20)
 
+    def save(self, *args, **kwargs):
+        creating = not self.pk
+        super().save(*args, **kwargs)  # Save to get a primary key if creating
+        
+        if creating:
+            content_file, file_name = generate_initial_image(self.username)
+            self.profile_image.save(file_name, content_file, save=True)
     class Meta:
         verbose_name_plural = "Business"
     

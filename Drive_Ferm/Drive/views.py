@@ -10,6 +10,8 @@ import stripe
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
+from .functions import generate_unique_username
+
 
 
 #stripe_keys
@@ -50,39 +52,67 @@ from .form import SignInForm, EditProfileForm
 
 #login_view
 
-def logform(request):
-    if request.method=='POST':
-        username = request.POST['username']
-        print(request.POST['username'])
-        password = request.POST['password']
-        print(request.POST['password'])
-        user = authenticate(request, username=username, password=password)
-        print('logged in')
-        login(request, user)
-        print('logged in')
-        return redirect('profile')
-    else:
-        return render(request, 'login.html')
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
-#sign_up_view
-def register_user(request):
-    if request.method=='POST':
-        form = SignInForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=password)
+def logform(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
             login(request, user)
-            messages.warning(request,("Please complete ur signing up"))
-            return redirect('profile')
+            messages.success(request, 'Successfully logged in.')
+            return redirect('UpdateProfile')  # Redirect to a home or another target page
         else:
-            messages.warning(request,("There was an error Logging In, Please try again!"))
-    else:
-        form=SignInForm()
-    return render(request, 'signup.html', {
-            'form':form,
-    })
+            messages.error(request, 'Invalid username or password.')
+    
+    return render(request, 'login.html')  # Path to your login template
+
+
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
+def register(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('First_name')
+        last_name = request.POST.get('Last_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user_type = request.POST.get('user_type')
+        print(email)
+
+        # Generate a unique username from the first name and last name
+        username = generate_unique_username(first_name, last_name)
+
+        # Depending on the user_type, create a Customer or Business instance
+        if user_type == 'Client':
+            
+            Customer.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name
+        )
+            messages.success(request, "Client account created successfully!")
+        elif user_type == 'Business':
+            Business.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name
+        )
+            messages.success(request, "Business account created successfully!")
+        else:
+            messages.error(request, "Invalid user type selected.")
+        
+        return redirect('login')  # Redirect to a home or another target page after creation
+    
+    return render(request, 'signup.html')  # Path to your signup template if GET request
 
 
 def logoutt(request):
@@ -232,15 +262,13 @@ def create_checkout_session(request):
 
 
 
-################# -------UPDATE------- #################
+################# -------UPDATE & DELETE IMAGE ------- #################
 @csrf_exempt
 def update_user_information(request):
-    print(request.user)
-    profile = UserAuth.objects.get(username=request.user)
-    profile_picture_url = request.build_absolute_uri(profile.profile_image.url)  # Construct absolute URL
+    profile = Customer.objects.get(username=request.user.username)
+    profile_picture_url = request.build_absolute_uri(profile.profile_image.url) if profile.profile_image else None  # Construct absolute URL
 
     if request.method == 'POST':
-        # Extract form data
         first_name = request.POST.get('First_Name')
         last_name = request.POST.get('Last_Name')
         username = request.POST.get('Username')
@@ -249,24 +277,27 @@ def update_user_information(request):
         old_password = request.POST.get('old_password')
         new_password1 = request.POST.get('new_password1')
         new_password2 = request.POST.get('new_password2')
-
-                # Handle profile picture upload
+        
+       # Handle profile picture upload
         if 'photo' in request.FILES:
             photo = request.FILES['photo']
-            file_path = os.path.join(settings.MEDIA_ROOT, 'profile_images/', photo.name)
-            with default_storage.open(file_path, 'wb+') as destination:
-                for chunk in photo.chunks():
-                    destination.write(chunk)
-            # Update user's profile picture URL
-            request.user.profile_image = file_path
+            print(photo)
+            # Delete old image if it exists
+            if profile.profile_image:
+                profile.profile_image.delete(save=False)  # Deletes the file and not the model instance
+                print('deletion complete')
+            
+            # Save new image
+            profile.profile_image.save(photo.name, photo, save=False)
+            print('done')
 
         # Update user information
-        user = request.user
-        user.first_name = first_name
-        user.last_name = last_name
-        user.username = username
-        user.email = email
-        user.shipping_address = shipping_address
+        profile.first_name = first_name
+        profile.last_name = last_name
+        profile.username = username
+        profile.email = email
+        profile.shipping_address = shipping_address
+        
 
         # Check if old password matches
         if old_password and not request.user.check_password(old_password):
@@ -280,17 +311,20 @@ def update_user_information(request):
 
         # Change password if new password is provided
         if new_password1:
-            user.set_password(new_password1)
-            update_session_auth_hash(request, user)  # Update session to prevent logout
+            profile.set_password(new_password1)
+            update_session_auth_hash(request, profile)  # Update session to prevent logout
 
-        user.save()
-        #messages.success(request, "Your information has been updated successfully.")
+        profile.save()
+        # user.save()
+        messages.success(request, "Your information has been updated successfully.")
         return redirect('UpdateProfile')  # Redirect to user profile page or any other page
 
     return render(request, 'Cupdate.html', {'profile': profile, 'profile_picture_url': profile_picture_url})
 
 
 def update_business(request):
+    profile = Business.objects.get(username=request.user.username)
+    profile_picture_url = request.build_absolute_uri(profile.profile_image.url) if profile.profile_image else None  # Construct absolute URL
     if request.method == 'POST':
         # Extract form data
         business_name = request.POST.get('Business_name')
@@ -302,6 +336,19 @@ def update_business(request):
 
         # Retrieve the current business profile
         business = Business.objects.get(user=request.user)
+
+               # Handle profile picture upload
+        if 'photo' in request.FILES:
+            photo = request.FILES['photo']
+            print(photo)
+            # Delete old image if it exists
+            if business.profile_image:
+                business.profile_image.delete(save=False)  # Deletes the file and not the model instance
+                print('deletion complete')
+            
+            # Save new image
+            business.profile_image.save(photo.name, photo, save=False)
+            print('done')
 
         # Update business information
         business.business_name = business_name
@@ -322,12 +369,24 @@ def update_business(request):
 
         # Save changes
         business.save()
-        request.user.save()
 
         messages.success(request, "Business information updated successfully.")
         return redirect('profile')  # Redirect to profile or any other relevant page
 
-    return render(request, 'update_business.html')  # Replace 'update_business.html' with your template path
+    return render(request, 'settings.html', {'profile': profile, 'profile_picture_url': profile_picture_url})  # Replace 'update_business.html' with your template path
+
+
+def delete_profile_picture(request):
+    profile = Customer.objects.get(username=request.user.username)
+    if request.method == 'POST':
+        profile.profile_image.delete()  # Supprime l'image
+        profile.profile_image = None
+        profile.save()  # Sauvegarde le modèle sans l'image
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+    
+
 
 
 
@@ -385,9 +444,20 @@ def add_product(request):
                     quantity_in_stock=quantity_in_stock,
                     description=description
                 )
+                # Handle profile picture upload
+                if 'photo' in request.FILES:
+                    photo = request.FILES['photo']
+                    print(photo)
+                    # Delete old image if it exists
+                    if product.image:
+                        product.image.delete(save=False)  # Deletes the file and not the model instance
+                        print('deletion complete')
+                    
+                    # Save new image
+                    product.image.save(photo.name, photo, save=False)
+                    print('done')
 
-                if image:
-                    product.image.save(image.name, image, save=True)
+                product.save()
 
                 # Save pricing data to the database
                 for price, quantity, volume in zip(prices, quantities, volumes):
@@ -409,11 +479,6 @@ def add_product(request):
     return render(request, 'New-product.html',{'businesses': businesses})  # Render the template for the form
 
 
-# def feedback(request):
-#     data = json.loads(request.body)
-#     selected_option = data.get('selectedOption')
-#     print(selected_option)
-#     return render(request,'feedback.html',{})
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -428,7 +493,6 @@ def feedback(request):
     # costumer = Customer.objects.get(user=request.user)
     if request.method == "POST":
         try:
-            print(request.body)
             data = json.loads(request.body)
             
             # Handle fetching products for a farm
@@ -450,11 +514,8 @@ def feedback(request):
                 ).aggregate(Avg('rating'))['rating__avg']
                 return JsonResponse({'average_rating': round(average_rating) if average_rating else 0})
             
-            
-            print(product_name,new_rating,feed, request.user)
-                    # Retrieve the current business profile
+            # Retrieve the current costumer profile
             costumer = Customer.objects.get(username=request.user.username)
-            print(product_name,new_rating,feed, costumer)
             # Handle submitting a new rating and feedback
             if product_name and new_rating and feed:
                 Review.objects.create(
@@ -469,7 +530,11 @@ def feedback(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     else:
+        # GET request handling here
         return render(request, 'feedback.html', {'farms': businesses})
+
+    # Default response if none of the conditions are met
+    return JsonResponse({'message': 'Your request was received, but no action was taken. Please check your request format and try again.'})
 
 
 

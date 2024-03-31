@@ -8,10 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
     <title>sign Up</title>
     <style>
       #mydiv{
-        background-image: url('./csm_Ferme_pedagogique_des_Dagueys_5780_8402bfb1db.jpg');
+        background-image: url('../../static/csm_Ferme_pedagogique_des_Dagueys_5780_8402bfb1db.jpg');
         z-index: 99;
         background-repeat: no-repeat;
         background-size: cover;
@@ -31,7 +33,7 @@
 
         <div class="d-flex justify-content-center align-items-center order-first pow rounded">
             <form method="POST" style="width: 70%;">
-              <!-- {%csrf_token%} -->
+              {%csrf_token%}
               <div class="form-group">
                 <h2>
                   <a class="navbar-brand" href=""><img src="../static/background/location.png" alt="">
@@ -55,27 +57,44 @@
                 {% endif%} -->
               </div>
               <br>
-                <div class="form-group">
-                  <label for="InputEmail1">username</label>
-                  <input type="text" name="username" class="form-control" id="InputEmail1" aria-describedby="emailHelp" placeholder="Enter Username" required>
-                  <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+              <div class="form-group">
+                <label for="InputEmail1">username</label>
+                <input type="text" name="username" class="form-control" id="InputEmail1" aria-describedby="emailHelp" placeholder="Enter Username" required>
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+              </div>
+              <div class="form-group">
+                <label for="InputPassword1">Password</label>
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" id="passwordInput" placeholder="Password" aria-label="Recipient's username" aria-describedby="button-addon2" name="password" required>
+                  <button class="btn btn-outline-success" type="button" id="button-addon2" onclick="togglePasswordVisibility()"><i class="bi bi-eye-slash" id="togglePasswordIcon"></i></button>
                 </div>
-                <div class="form-group">
-                  <label for="InputPassword1">Password</label>
-                  <input type="password" name="password" class="form-control" id="InputPassword1" placeholder="Enter Password" required>
-                </div>
-                <br>
-                <div class="form-group">
-                  <a href="{% url 'signup' %}" class="text-success" >Still don't have an account ?</a>
-                </div>
-                <br>
-                <button type="submit" class="btn btn-outline-success">Submit</button>
-              </form>
+              </div>
+              <br>
+              <div class="form-group d-flex">
+                <a href="{% url 'signup' %}" class="text-success" style="text-decoration: none;">Still don't have an account ?</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="login.html" class="text-success" style="text-decoration: none;">Forgot Your Password ?</a>
+              </div>
+              <br>
+              <button type="submit" class="btn btn-outline-success">Submit</button>
+            </form>
         </div>
     </div>
 </div>
 <script>
-
-</script>         
+  function togglePasswordVisibility() {
+    var passwordInput = document.getElementById("passwordInput");
+    var togglePasswordIcon = document.getElementById("togglePasswordIcon");
+    
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      togglePasswordIcon.classList.remove("bi-eye-slash");
+      togglePasswordIcon.classList.add("bi-eye");
+    } else {
+      passwordInput.type = "password";
+      togglePasswordIcon.classList.remove("bi-eye");
+      togglePasswordIcon.classList.add("bi-eye-slash");
+    }
+  }
+  </script>      
 </body>
 </html>

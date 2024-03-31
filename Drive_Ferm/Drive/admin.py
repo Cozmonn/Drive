@@ -12,7 +12,11 @@ class ProductPricingAdmin(admin.ModelAdmin):
 
 admin.site.register(UserAuth, UserAdmin)
 admin.site.register(Customer)
-admin.site.register(Business)
+
+class BusinessAdmin(admin.ModelAdmin):
+    list_display = ('username', 'business_name', 'business_id')
+admin.site.register(Business,BusinessAdmin)
+
 admin.site.register(Drive)
 admin.site.register(ProductPricing,ProductPricingAdmin)
 admin.site.register(Product)

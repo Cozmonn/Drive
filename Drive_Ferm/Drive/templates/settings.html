@@ -238,7 +238,7 @@
                   </div>
                 </div>
                 <div class="col d-flex flex-column">
-                  <form action="" method="post">
+                  <form action="" method="post"  enctype="multipart/form-data">
                     <div class="card-body">
                       <h2 class="mb-4">My Account</h2>
                       <h3 class="card-title">Profile Details</h3>
@@ -256,12 +256,12 @@
                       <div class="row g-3">
                         <div class="col-md">
                           <div class="form-label">Business Name</div>
-                          <input type="text" class="form-control" value="Tabler" name="Business_name">
+                          <input type="text" class="form-control" value="{{ profile.business_name }}" name="Business_name">
                         </div>
                         
                         <div class="col-md">
                           <div class="form-label">Location</div>
-                          <input type="text" class="form-control" value="Peimei, China" name="Location">
+                          <input type="text" class="form-control" value="{{ profile.Location }}" name="Location">
                         </div>
                       </div>
                       <h3 class="card-title mt-4">Email</h3>
@@ -269,7 +269,7 @@
                       <div>
                         <div class="row g-2">
                           <div class="col-auto">
-                            <input type="text" class="form-control w-auto" value="paweluna@howstuffworks.com" name="email">
+                            <input type="text" class="form-control w-auto" value="{{ profile.email }}" name="email">
                           </div>
                         </div>
                       </div>
@@ -280,15 +280,15 @@
                             <div class="row">
                                 <div class="col-md">
                                 <div class="form-label">Old Password</div>
-                                <input type="text" class="form-control" value="Tabler" name="old_password">
+                                <input type="text" class="form-control" name="old_password">
                                 </div>
                                 <div class="col-md">
                                 <div class="form-label">New Password</div>
-                                <input type="text" class="form-control" value="560afc32" name="new_password1">
+                                <input type="text" class="form-control" name="new_password1">
                                 </div>
                                 <div class="col-md">
                                 <div class="form-label">Confirm New Password</div>
-                                <input type="text" class="form-control" value="560afc32" name="new_password2">
+                                <input type="text" class="form-control" name="new_password2">
                                 </div>
                             </div>
                         </div>

@@ -7,12 +7,12 @@ from . import views
 
 urlpatterns = [
     
-    path('home', views.home, name="mainview"),
+    path('home', views.home, name="home"),
     path('visiteVirtuelle/', views.visiteVirtuelle, name="visiteVirtuelle"),
     path('productListing/', views.productListing, name="productListing"),
     path('contactUs/', views.contactUs, name="contactUs"),
     path("signin/", views.logform, name="login"),
-    path("signup/", views.register_user, name="signup"),
+    path("signup/", views.register, name="signup"),
     path("loout/", views.logoutt, name="logout"),
     path("profile/", views.profile_view, name="profile"),
     path('pay/', views.pay, name="pay"),
@@ -21,4 +21,6 @@ urlpatterns = [
     path('AddProduct/', views.add_product, name="Nproduct"),
     path('checkout/', views.create_checkout_session, name="checkoutSession"),
     path('Update/', views.update_user_information, name="UpdateProfile"),
+    path('BUpdate/', views.update_business, name="Update_Business"),
+    
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
