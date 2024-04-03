@@ -29,9 +29,29 @@
       	font-feature-settings: "cv03", "cv04", "cv11";
       }
       .group:focus .group-focus\:flex {
-    display: flex;
-}
+        display: flex;
+     }
+     
     </style>
+    <style>
+      /* Add this style to ensure the dropdown content is initially hidden */
+      .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          padding: 12px 16px;
+          z-index: 1;
+          width: 100%; /* Match the width of the dropdown trigger */
+      }
+      
+      /* Style to show the dropdown content */
+      .show {
+          display: flex !important;
+          flex-direction: column; /* Ensure the links are vertically stacked */
+      }
+      </style>
   </head>
   <body >
     <script src="../../static/dist/js/demo-theme.min.js?1684106062"></script>
@@ -49,13 +69,11 @@
           </h1>
           <div class="navbar-nav flex-row order-md-last">
             <div class="d-none d-md-flex">
-              <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode" data-bs-toggle="tooltip"
-		   data-bs-placement="bottom">
+              <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode" data-bs-toggle="tooltip"data-bs-placement="bottom">
                 <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>
               </a>
-              <a href="?theme=light" class="nav-link px-0 hide-theme-light" title="Enable light mode" data-bs-toggle="tooltip"
-		   data-bs-placement="bottom">
+              <a href="?theme=light" class="nav-link px-0 hide-theme-light" title="Enable light mode" data-bs-toggle="tooltip"data-bs-placement="bottom">
                 <!-- Download SVG icon from http://tabler-icons.io/i/sun -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
               </a>
@@ -254,283 +272,84 @@
                   	<!-- Component Start -->
 	<h1 class="text-3xl">Product Category Page Title</h1>
 	<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between mt-6">
-		<span class="text-sm font-semibold">1-16 of 148 Products</span>
-		<button class="relative text-sm focus:outline-none group mt-4 sm:mt-0">
-			<div class="flex items-center justify-between w-40 h-10 px-3 border-2 border-gray-300 rounded hover:bg-gray-300">
-				<span class="font-medium">
-					Popular
-				</span>
-				<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-					<path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-				</svg>
-			</div>
-			<div class="absolute z-10 flex-col items-start hidden w-full pb-1 bg-white shadow-lg rounded group-focus:flex">
-				<a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Popular</a>
-				<a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Featured</a>
-				<a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Newest</a>
-				<a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Lowest Price</a>
-				<a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="#">Highest Price</a>
-			</div>
-		</button>
+		<span class="text-sm font-semibold">{{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }} Products</span>
+    <div class="relative text-sm focus:outline-none group mt-4 sm:mt-0">
+      <!-- Added onclick event to toggle dropdown -->
+      <div onclick="toggleDropdown()" class="dropdown-btn flex items-center justify-between w-40 h-10 px-3 border-2 border-gray-300 rounded hover:bg-gray-300 cursor-pointer">
+          <span class="font-medium">Filter</span>
+          <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+      </div>
+      <!-- Updated class name for toggling -->
+      <div id="dropdownContent" class="dropdown-content absolute z-10 items-start hidden w-full pb-1 bg-white shadow-lg rounded">
+          {% with request.GET.page as current_page %}
+              <a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="?page={{ current_page|default_if_none:'1' }}&filter=Popular">Popular</a>
+              <a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="?page={{ current_page|default_if_none:'1' }}&filter=Featured">Featured</a>
+              <a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="?page={{ current_page|default_if_none:'1' }}&filter=Newest">Newest</a>
+              <a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="?page={{ current_page|default_if_none:'1' }}&filter=Lowest_Price">Lowest Price</a>
+              <a class="nav-link w-full px-4 py-2 text-left hover:bg-gray-200" href="?page={{ current_page|default_if_none:'1' }}&filter=Highest_Price">Highest Price</a>
+          {% endwith %}
+      </div>
+  </div>
+  </div>
+  
 	</div>
 	<div class="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-12 w-full mt-6">
 		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="./image_67178497 (1).JPG" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="../../static/huile2.JPG" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="../../static/huile3.jpg" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="../../static/Minimalist Black and White Blank Paper Document.pdf.png" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="../../static/huile1.JPG" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="./image_67178497 (1).JPG" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="../../static/Minimalist Black and White Blank Paper Document.pdf.png" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="../../static/huile3.jpg" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="./image_67178497 (1).JPG" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="./image_67178497 (1).JPG" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="./image_67178497 (1).JPG" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
-    		<!-- Product Tile Start -->
-		<div>
-      <center>
-        <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
-          <img src="../../static/huile1.JPG" alt="" class="block h-64 rounded-lg shadow-lg">
-        </a>
-      </center>
-			<div class="flex items-center justify-between mt-3">
-				<div>
-					<a href="#" class="font-medium">Product Name</a>
-					<a class="flex items-center" href="#">
-						<span class="text-xs font-medium text-gray-600">by</span>
-						<span class="text-xs font-medium ml-1 text-indigo-500">Store Name</span>
-					</a>
-				</div>
-				<span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">$34</span>
-			</div>
-		</div>
-		<!-- Product Tile End -->
+    {% for product in page_obj %}
+    <div>
+        <center>
+            <a href="#" class="block h-64 rounded-lg shadow-lg" style="display: inline-block;">
+                <img src="{{ product.image.url }}" alt="" class="block h-64 rounded-lg shadow-lg">
+            </a>
+        </center>
+        <div class="flex items-center justify-between mt-3">
+            <div>
+                <a href="{% url 'product-detail' product.id %}" class="font-medium">{{ product.product_name }}</a>
+                <a class="flex items-center" href="#">
+                    <span class="text-xs font-medium text-gray-600">by</span>
+                    <span class="text-xs font-medium ml-1 text-indigo-500">{{ product.farm }}</span>
+                </a>
+            </div>
+            <span class="flex items-center h-5 bg-indigo-200 text-indigo-600 text-sm px-2 rounded">${{ product.standard_price }}</span>
+        </div>
+    </div>
+    {% endfor %}
 		
 	</div>
-	<div class="flex justify-center mt-10 space-x-1">
-		<button class="flex items-center justify-center h-5 w-8 rounded text-gray-400">
-			<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-			  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-			</svg>
-		</button>
-		<button class="flex items-center justify-center h-5 px-2 rounded text-sm font-medium text-gray-400" disabled>
-			Prev
-		</button>
-		<button class="flex items-center justify-center h-5 w-8 rounded bg-indigo-200 text-sm font-medium text-indigo-600" disabled>
-			1
-		</button>
-		<button class="flex items-center justify-center h-5 w-8 rounded hover:bg-indigo-200 text-sm font-medium text-gray-600 hover:text-indigo-600">
-			2
-		</button>
-		<button class="flex items-center justify-center h-5 w-8 rounded hover:bg-indigo-200 text-sm font-medium text-gray-600 hover:text-indigo-600">
-			3
-		</button>
-		<button class="flex items-center justify-center h-5 px-2 rounded hover:bg-indigo-200 text-sm font-medium text-gray-600 hover:text-indigo-600">
-			Next
-		</button>
-		<button class="flex items-center justify-center h-5 w-8 rounded hover:bg-indigo-200 text-gray-600 hover:text-indigo-600">
-			<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-			  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-			</svg>
-		</button>
-	</div>
+  <!-- Pagination Buttons -->
+  <div class="flex justify-center mt-10 space-x-1">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="flex items-center justify-center h-5 w-8 rounded text-gray-400">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+    </a>
+    {% else %}
+    <button class="flex items-center justify-center h-5 w-8 rounded text-gray-400" disabled>
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+    </button>
+    {% endif %}
+    
+    <!-- Other Pagination Buttons -->
+    
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="flex items-center justify-center h-5 w-8 rounded hover:bg-indigo-200 text-gray-600 hover:text-indigo-600">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+        </svg>
+    </a>
+    {% else %}
+    <button class="flex items-center justify-center h-5 w-8 rounded text-gray-400" disabled>
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+        </svg>
+    </button>
+    {% endif %}
+  </div>
 	<!-- Component End  -->
                 </div>
               </div>
@@ -543,5 +362,12 @@
     <!-- Tabler Core -->
     <script src="../../static/dist/js/tabler.min.js?1684106062" defer></script>
     <script src="../../static/dist/js/demo.min.js?1684106062" defer></script>
+    <script>
+      // JavaScript to toggle the dropdown
+      function toggleDropdown() {
+          var dropdownContent = document.getElementById("dropdownContent");
+          dropdownContent.classList.toggle("show");
+      }
+      </script>
   </body>
 </html>

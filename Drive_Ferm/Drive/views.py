@@ -1,6 +1,9 @@
 # views.py
+
 import json
+from django.utils import timezone
 from django.core.files.storage import default_storage
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import os
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -10,6 +13,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from decimal import Decimal
 
 from .functions import generate_unique_username
 
@@ -68,7 +72,7 @@ from .form import SignInForm, EditProfileForm
 # Create your views here.
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpRequest
-from .models import Event, Gallery
+from .models import Cart, CartItem, Coupon, Event, Gallery
 from django.contrib import messages
 
 @csrf_exempt
@@ -219,21 +223,71 @@ def logoutt(request):
     
 #     return HttpResponseRedirect(session.url)
 
+
+
+def create_checkout_session(request):
+    if request.method == 'POST':
+        pricing_id = request.POST.get('pricingQuantity')
+        quantity = int(request.POST.get('directQuantity', 1))
+        pricing = get_object_or_404(ProductPricing, id=pricing_id)
+        product = pricing.product
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[
+                    {
+                        'price_data': {
+                            'currency': 'usd',
+                            'product_data': {
+                                'name': f'{product.product_name}, {product.farm}',
+                                'images': [product.url],
+                                'metadata': {'volume': str(pricing.quantity)},  # Convert to string if needed
+                            },
+                            'unit_amount': int(pricing.price * 100),  # Convert to cents
+                        },
+                        'quantity': quantity,
+                    },
+                ],
+                mode='payment',
+                success_url=request.build_absolute_uri('/success/'),
+                cancel_url=request.build_absolute_uri('/cancel/'),
+                metadata={'volume': quantity, 'product_id': str(product.id)},
+            )
+            return redirect(checkout_session.url)
+        except Exception as e:
+            # Handle exceptions or errors
+            return redirect('/error/')  # Redirect to an error handling page or similar
+
+
+
+
+
+
+
+
 @csrf_exempt
 def pay(request):
     return render(request, 'paiement.html')
 
 @csrf_exempt
 def create_checkout_session(request):
-    # Mocking cart items for testing
-    mock_cart_items = [
-        {"product_name": "HUILE DE COLZA", "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.", "price": 10.99, "quantity": 2, "image_url": 'https://picsum.photos/200'},
-        {"product_name": "LES PÂTES COQUILLETTES", "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.", "price": 15.99, "quantity": 1, "image_url": 'https://picsum.photos/200'},
-    ]
+
+    # Make sure the user has a cart with items in it
+    try:
+        cart = Cart.objects.get(user=request.user, checked_out=False)
+        if not cart.items.exists():
+            return JsonResponse({'error': 'Your cart is empty.'}, status=400)
+    except Cart.DoesNotExist:
+        return JsonResponse({'error': 'No active cart found.'}, status=404)
+
+    
+    roduct = get_object_or_404(Product, product=cart.product)
+    # Calculate the total price in the backend
+    total = cart.get_total_price()
     
     # Prepare line items for the payment session
     line_items = []
-    for item in mock_cart_items:
+    for item in cart.items.all():
         line_items.append({
             'price_data': {
                 'currency': 'usd',
@@ -487,6 +541,53 @@ def delete_profile_picture(request):
 
 
 
+def products_by_farm(request):
+    profile = get_object_or_404(Business, username=request.user.username)
+    farm = profile.farm
+
+    search_query = request.GET.get('search', '')
+    products = Product.objects.filter(farm=farm)
+    if search_query:
+        products = products.filter(product_name__icontains=search_query)
+
+    entries_per_page = request.GET.get('entries', 5)
+    try:
+        entries_per_page = int(entries_per_page)
+    except ValueError:
+        entries_per_page = 5
+
+    paginator = Paginator(products, entries_per_page)
+    page = request.GET.get('page')
+
+    try:
+        products_page = paginator.page(page)
+    except PageNotAnInteger:
+        products_page = paginator.page(1)
+    except EmptyPage:
+        products_page = paginator.page(paginator.num_pages)
+
+    product_list = []
+    for product in products_page:
+        # Directly fetch pricing for each product
+        pricings_for_product = ProductPricing.objects.filter(product=product)
+        pricing_display = [f'{pricing.quantity}: ${pricing.price}' for pricing in pricings_for_product]
+
+        product_list.append({
+            'figuring': product.image.url if product.image else None,
+            'farm': product.farm.name,
+            'name': product.product_name,  # Adjust according to your actual field name
+            'pricing': pricing_display,
+            'id': product.id,
+        })
+
+    context = {
+        'product_list': product_list,
+        'products_page': products_page,
+        'entries': entries_per_page,
+        'search_query': search_query,
+    }
+
+    return render(request, 'all-productManagement.html', context)
 
 ################# -------New Product------- #################
 from django.shortcuts import render, redirect
@@ -556,7 +657,6 @@ def add_product(request):
                 for price, quantity, volume in zip(prices, quantities, volumes):
                     quantity_with_volume = f"{quantity}{volume}"
                     # Add the product instance to the ProductPricing creation
-                    print(price,quantity_with_volume)
                     ProductPricing.objects.create(
                         product=product,
                         price=price,
@@ -570,6 +670,144 @@ def add_product(request):
 
     
     return render(request, 'New-product.html',{'businesses': businesses})  # Render the template for the form
+
+#>>>>>>>>>>>>>>>>>>>>>>>  UPDATE Product <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+from django.shortcuts import render, get_object_or_404
+from django.core.serializers import serialize
+from .models import Product, ProductPricing
+import re
+from decimal import Decimal
+
+@csrf_exempt
+def edit_product(request, pk):
+    ing = Farm.objects.all()
+    product = get_object_or_404(Product, pk=pk)
+    pricings = ProductPricing.objects.filter(product=product)
+
+    if request.method == 'POST':
+        # Update the product details
+        farm = request.POST.get('farm')  # assuming you have a select input for farm
+        farm = get_object_or_404(Farm, pk=farm)
+        product.farm = farm
+        product.product_name = request.POST.get('product_name')
+        product.quantity_in_stock = request.POST.get('quantity_in_stock')    
+        product.standard_price = Decimal(request.POST.get('price').replace(',','.'))
+        product.description =request.POST.get('description')
+
+        prices = request.POST.getlist('price[]')
+        quantities = request.POST.getlist('quantity[]')
+        volumes = request.POST.getlist('volume[]')
+
+        # Handle profile picture upload
+        if 'image' in request.FILES:
+            photo = request.FILES['image']
+            # Delete old image if it exists
+            if product.image:
+                product.image.delete(save=False)  # Deletes the file and not the model instance
+            
+            # Save new image
+            product.image.save(photo.name, photo, save=False)
+        
+            # Delete all existing pricings for the product
+        ProductPricing.objects.filter(product=product).delete()
+                # Save pricing data to the database
+        for price, quantity, volume in zip(prices, quantities, volumes):
+            quantity_with_volume = f"{quantity}{volume}"
+            # Add the product instance to the ProductPricing creation
+            ProductPricing.objects.create(
+                product=product,
+                price=price,
+                quantity=quantity_with_volume,
+            )
+
+
+        product.save()
+        messages.success(request, 'Product updated successfully!')
+    
+    pricing_data = []
+    for pricing in pricings:
+        quantity_string = str(pricing.quantity)
+        match = re.match(r'(\d+\.?\d*)\s*(\w+)', quantity_string)
+        if match:
+            pricing_data.append({
+                'quantity': match.group(1),
+                'unit': match.group(2),
+                'price': str(pricing.price)  # Convert Decimal to string
+            })
+
+    # Convert pricing_data to a JSON string
+    pricings_json = json.dumps(pricing_data)
+
+    context = {
+        'product': product,
+        'pricings_json': pricings_json,  # Now a JSON string of the pricing data
+        'farm': ing
+    }
+
+    return render(request, 'update-product.html', context)
+
+
+def products_view(request):
+    products = Product.objects.all()  # Retrieve all products from the database
+
+    # Capture the filter type from the query parameters
+    filter_type = request.GET.get('filter')
+
+    # Apply filters based on the filter_type
+    if filter_type == 'Popular':
+        products = products.annotate(avg_rating=Avg('review__rating')).order_by('-avg_rating')
+    elif filter_type == 'Newest':
+        products = products.order_by('-created_at')
+    elif filter_type == 'Lowest_Price':
+        products = products.order_by('standard_price')
+    elif filter_type == 'Highest_Price':
+        products = products.order_by('-standard_price')
+    # Implement the logic for 'Featured' if you have a specific criteria for featured products
+
+    # Pagination
+    page_number = request.GET.get('page', 1)
+    products_per_page = 5
+    paginator = Paginator(products, products_per_page)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'product-list.html', {'page_obj': page_obj})
+
+
+
+def product_detail(request, pk):
+    # Assuming 'product_id' is passed to this view function
+    product = Product.objects.filter(id=pk).annotate(average_rating=Avg('review__rating')).first()
+    pricings = ProductPricing.objects.filter(product=product)
+    # If the product does not exist, 'get_object_or_404' will raise a 404 error.
+    if not product:
+        product = get_object_or_404(Product, id=pk)
+    
+        # Exclude the current product and retrieve 4 random products from the same farm
+    random_products = Product.objects.filter(farm=product.farm).order_by('?')[:4]
+    context = {
+        'product': product,
+        'roducts': random_products,
+        'pricings': pricings
+    }
+
+    # Now, 'product.average_rating' contains the average rating, which can be None if there are no reviews
+    return render(request, 'product-detail.html', context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -721,3 +959,160 @@ def display_feedback(request):
                 user_profile_urls[user.uuid] = None  # Or the URL to a default image
     
     return render(request, 'feedback_list.html', {'feedback_list': feedback_list, 'user_profile_urls': user_profile_urls,})
+
+
+
+@csrf_exempt
+def add_to_cart(request):
+    # This assumes you're sending JSON data in the POST request
+    data = json.loads(request.body)
+    pricing_id = data.get('pricing_id')
+    quantity = data.get('quantity', 1)
+    volume = data.get('volume')
+    
+    pricing = get_object_or_404(ProductPricing, id=pricing_id)
+    if not pricing.product:
+        return JsonResponse({'success': False, 'error': 'Product not found'})
+    
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        volume=volume,
+        product=pricing.product,
+        defaults={'quantity': quantity},
+    )
+    if not created:
+        cart_item.quantity += int(quantity)
+        cart_item.save()
+    
+    return JsonResponse({'success': True})
+
+
+def cart_items_view(request):
+    if request.user.is_authenticated:
+        # Attempt to retrieve the user's cart. Assumes one cart per user.
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        # Handling the POST request to update item quantities
+        if request.method == 'POST':
+            item_id = request.POST.get('item_id')
+            new_quantity = request.POST.get('quantity')
+            
+            # Fetch the specific cart item and update its quantity
+            try:
+                cart_item = CartItem.objects.get(id=item_id, cart=cart)  # use cart from above
+                cart_item.quantity = int(new_quantity)  # Ensure quantity is an integer
+                cart_item.save()
+                # Redirect back to the cart page to display the updated cart
+                return HttpResponseRedirect(request.path_info)
+            except CartItem.DoesNotExist:
+                # Handle error or notify the user if the cart item does not exist
+                pass
+
+        # For GET requests or after POST request processing, fetch cart items again in case of updates
+        cart_items = cart.items.all()  # Adjusted to use the cart instance directly
+        total_price = cart.get_total_price()  # Calculate the total price including any discounts from coupons
+        total_item_instances = cart.items.all().count()
+        context = {
+            'cart_items': cart_items,
+            'total_item_instances':total_item_instances,
+            # 'categorical_price' : categorical_price,
+            'total_price': total_price,  # Add the total_price to the context
+        }
+        return render(request, 'shopping-cart.html', context)
+    else:
+        return redirect('product-detail')  # Adjust as per your login or desired redirect view
+    
+
+def bulk_update_cart_items(request):
+    data = json.loads(request.body)
+    updates = data.get('updates')  # Expecting a list of {id, quantity}
+    for update in updates:
+        cart_item_id = update.get('id')
+        new_quantity = update.get('quantity')
+        cart_item = get_object_or_404(CartItem, id=cart_item_id, cart__user=request.user)
+
+        try:
+            new_quantity = int(new_quantity)
+            if new_quantity < 1:
+                cart_item.delete()  # Optionally remove the item if the quantity is less than 1
+            else:
+                cart_item.quantity = new_quantity
+                cart_item.save()
+        except (ValueError, TypeError):
+            # Handle the error as needed
+            pass
+    
+    return JsonResponse({'status': 'success'})
+
+def apply_coupon(request):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    data = json.loads(request.body)
+    coupon_code = data.get('code')
+    discount = 0
+    if coupon_code:
+        coupon = Coupon.objects.get(code=coupon_code)
+        discount = coupon.discount
+        print(discount)
+
+    # Assume get_cart_from_request is a hypothetical function you've defined to retrieve the user's cart 
+    total = cart.get_total_price()
+    if discount > 0:
+        total -= (total * discount / 100)
+    cart.price=total
+    cart.save()
+    return JsonResponse({'total': total})
+
+
+
+@csrf_exempt
+def createcheckoutsession(request):
+    cart_items = CartItem.objects.filter(cart__user=request.user)
+    stripe_items = []
+    print(stripe_items)
+
+    # Check if a discount code is provided
+    discount_code = request.POST.get('coupon-code', None)
+    discount = None
+    if discount_code:
+        try:
+            coupon = Coupon.objects.get(code=discount_code, active=True)
+            discount = (100 - coupon.discount) / 100  # Convert discount percentage to a multiplier
+        except Coupon.DoesNotExist:
+            discount = None
+
+    for item in cart_items:
+        product = item.product
+        product_pricing = product.pricing.get(quantity=item.volume)
+        
+        # Calculate the unit amount, apply discount if available
+        unit_amount = product_pricing.price
+        if discount:
+            unit_amount *= Decimal(discount)  # Apply discount if there is one
+
+        # Prepare the Stripe line item
+        stripe_item = {
+            'price_data': {
+                'currency': 'usd',
+                'product_data': {
+                    'images': [product.url],  # Make sure image URLs are absolute
+                    'name': product.product_name,
+                    'description': product.description,
+                },
+                'unit_amount': int(unit_amount * 100),  # Convert to cents
+            },
+            'quantity': item.quantity,
+        }
+        stripe_items.append(stripe_item)
+
+    # Create the Stripe checkout session
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=stripe_items,
+            mode='payment',
+            success_url=request.build_absolute_uri('/success/'),  # Provide your success URL
+            cancel_url=request.build_absolute_uri('/cancel/'),  # Provide your cancel URL
+        )
+        return redirect(checkout_session.url, code=303)
+    except Exception as e:
+        return JsonResponse({'error': str(e)})

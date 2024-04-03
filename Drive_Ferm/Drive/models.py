@@ -1,9 +1,11 @@
 import uuid
 from uuid import UUID
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from .functions import generate_initial_image
+from django.utils import timezone
 # Create your models here.
 
 class UserAuth(AbstractUser):
@@ -91,6 +93,9 @@ class Product(models.Model):
     quantity_in_stock = models.PositiveIntegerField()
     farm = models.ForeignKey(Farm, on_delete=models.CASCADE, null=True, blank=True)
     image = models.ImageField(upload_to='product_images/',null=True, blank=True)  # Specify a path for image uploads
+    url = models.CharField(max_length=255, null=True, blank=True)
+    standard_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True,null=True, blank=True)
 
     def __str__(self):
         return self.product_name
@@ -99,6 +104,28 @@ class ProductPricing(models.Model):
     product = models.ForeignKey(Product, related_name='pricing', on_delete=models.CASCADE)
     quantity = models.CharField(max_length=100)  # You can use CharField to specify the quantity like '1kg', '3kg' etc.
     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def delete(self, *args, **kwargs):
+        self.is_deleted = True
+        self.save()
+
+    def hard_delete(self, *args, **kwargs):
+        super(ProductPricing, self).delete(*args, **kwargs)
+
+
+class Coupon(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    valid_from = models.DateTimeField()
+    valid_to = models.DateTimeField()
+    discount = models.IntegerField(help_text="Percentage discount")
+    active = models.BooleanField()
+
+    def __str__(self):
+        return self.code
+
+    def is_valid(self):
+        now = timezone.now()
+        return self.active and (self.valid_from <= now <= self.valid_to)
 
 # class Order(models.Model):
 #     # Specify related names for easier reverse lookups
@@ -115,17 +142,6 @@ class ProductPricing(models.Model):
 #     def __str__(self):
 #         return f"Order {self.pk} - {self.customer} - {self.product}"
 
-
-class Cart(models.Model):
-    user = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-
-    def __str__(self):
-        return f"{self.quantity} x {self.product.product_name} ({self.product.business_name})"
-
-    def total_price(self):
-        return self.quantity * self.product.pricing.get().price
     
 class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -136,7 +152,7 @@ class Review(models.Model):
             MaxValueValidator(5),
             MinValueValidator(0),
         ]
-                                         )
+    )
     review_date = models.DateTimeField(auto_now_add=True)
 
 class PageVisit(models.Model):
@@ -176,3 +192,40 @@ class Event(models.Model):
 class Gallery(models.Model):
     event = models.ForeignKey(Event, related_name='galleries', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='profile_images/')
+
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def get_total_price(self):
+        total = 0
+        for item in self.items.all():
+            total += item.get_cost()
+        if self.coupon and self.coupon.is_valid():
+            total -= (total * self.coupon.discount / 100)
+        return total
+
+    def __str__(self):
+        return f"Cart of {self.user.username}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    volume = models.CharField(max_length=255, default=1)
+
+    def get_cost(self):
+        # Attempt to find the product pricing that matches this cart item's volume
+        try:
+            product_pricing = self.product.pricing.get(quantity=self.volume)
+            return self.quantity * product_pricing.price
+        except ProductPricing.DoesNotExist:
+            return 0
+    
+    def __str__(self):
+        return f"Cart of {self.product}"
