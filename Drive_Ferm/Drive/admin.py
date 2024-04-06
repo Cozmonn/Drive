@@ -15,7 +15,7 @@ admin.site.register(Customer)
 admin.site.register(Business)
 admin.site.register(ProductPricing,ProductPricingAdmin)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('product_name', 'created_at')  # Add 'created_at' here
+    list_display = ('product_name', 'created_at','farm')  # Add 'created_at' here
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Farm)

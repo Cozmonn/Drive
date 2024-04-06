@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
             # MY_APPS
     'Drive',
-    'sslserver'
+    'sslserver',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

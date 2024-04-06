@@ -29,9 +29,6 @@ def home(request):
 def visiteVirtuelle(request):
     return render(request, "visite_virtuelle.html")
 
-def productListing(request):
-    return render(request, "products.html")
-
 def contactUs(request):
     return render(request, "contactuS.html")
 
@@ -241,6 +238,7 @@ def create_checkout_session(request):
                             'product_data': {
                                 'name': f'{product.product_name}, {product.farm}',
                                 'images': [product.url],
+                                'description': product.description,
                                 'metadata': {'volume': str(pricing.quantity)},  # Convert to string if needed
                             },
                             'unit_amount': int(pricing.price * 100),  # Convert to cents
@@ -269,48 +267,48 @@ def create_checkout_session(request):
 def pay(request):
     return render(request, 'paiement.html')
 
-@csrf_exempt
-def create_checkout_session(request):
+# @csrf_exempt
+# def create_checkout_session(request):
 
-    # Make sure the user has a cart with items in it
-    try:
-        cart = Cart.objects.get(user=request.user, checked_out=False)
-        if not cart.items.exists():
-            return JsonResponse({'error': 'Your cart is empty.'}, status=400)
-    except Cart.DoesNotExist:
-        return JsonResponse({'error': 'No active cart found.'}, status=404)
+#     # Make sure the user has a cart with items in it
+#     try:
+#         cart = Cart.objects.get(user=request.user)
+#         if not cart.items.exists():
+#             return JsonResponse({'error': 'Your cart is empty.'}, status=400)
+#     except Cart.DoesNotExist:
+#         return JsonResponse({'error': 'No active cart found.'}, status=404)
 
     
-    roduct = get_object_or_404(Product, product=cart.product)
-    # Calculate the total price in the backend
-    total = cart.get_total_price()
+#     roduct = get_object_or_404(Product, product=cart.product)
+#     # Calculate the total price in the backend
+#     total = cart.get_total_price()
     
-    # Prepare line items for the payment session
-    line_items = []
-    for item in cart.items.all():
-        line_items.append({
-            'price_data': {
-                'currency': 'usd',
-                'product_data': {
-                    'images': [item["image_url"]],
-                    'name': item["product_name"],
-                    'description': item["description"],
-                },
-                'unit_amount': int(item["price"] * 100),  # Price in cents
-            },
-            'quantity': item["quantity"],
-        })
+#     # Prepare line items for the payment session
+#     line_items = []
+#     for item in cart.items.all():
+#         line_items.append({
+#             'price_data': {
+#                 'currency': 'usd',
+#                 'product_data': {
+#                     'images': [item["image_url"]],
+#                     'name': item["product_name"],
+#                     'description': item["description"],
+#                 },
+#                 'unit_amount': int(item["price"] * 100),  # Price in cents
+#             },
+#             'quantity': item["quantity"],
+#         })
 
-    # Create a payment session with Stripe
-    session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
-        line_items=line_items,
-        mode='payment',
-        success_url='https://example.com/success',
-        cancel_url='https://example.com/cancel',
-    )
+#     # Create a payment session with Stripe
+#     session = stripe.checkout.Session.create(
+#         payment_method_types=['card'],
+#         line_items=line_items,
+#         mode='payment',
+#         success_url='https://example.com/success',
+#         cancel_url='https://example.com/cancel',
+#     )
 
-    return HttpResponseRedirect(session.url)
+#     return HttpResponseRedirect(session.url)
 
 # @csrf_exempt
 # def Webhooking(request):
