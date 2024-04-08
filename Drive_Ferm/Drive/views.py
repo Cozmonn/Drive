@@ -23,8 +23,18 @@ from .functions import generate_unique_username
 stripe.api_key = settings.STRIPE_SECRET_KEY
 # Create your views here.
 
+
 def home(request):
-    return render(request, "index.html")
+    # Get the four most recent products
+    newest_products = Product.objects.all()[:4]
+    
+    # Pass them to the context
+    context = {
+        'newest_products': newest_products,
+    }
+    
+    # Render the template
+    return render(request, 'home.html', context)
 
 def visiteVirtuelle(request):
     return render(request, "visite_virtuelle.html")

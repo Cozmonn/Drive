@@ -16,7 +16,7 @@ body {
     align-items: center;
     width: 100%;
     justify-content: center;
-    background: url('../../Drive/templates/autumn-decoration-with-smoothies.jpg'), center/100% auto no-repeat;
+    background: url('../../static/autumn-decoration-with-smoothies.jpg'), center/100% auto no-repeat;
     background-repeat: no-repeat;
     background-size: cover; /* This will ensure that the image is scaled within the container */
     background-position: center center;

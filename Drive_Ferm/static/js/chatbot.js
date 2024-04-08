@@ -50,7 +50,7 @@ $(window).on('keydown', function(e) {
 })
 
 var Fake = [
-  '<b><center>Happy Birthday! :) </b><br><br>So What are your plans for today?',
+  '<b><center>Hi visitor! :) </b><br><br>How can I help you dear customer 😇?',
     'Thats Good!',
   'So when are you coming back?',
   'okay,Damn sometime talking to you is just like sending letters! You reply so late :P',
