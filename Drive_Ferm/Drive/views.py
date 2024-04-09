@@ -36,7 +36,7 @@ def home(request):
     # Render the template
     return render(request, 'home.html', context)
 
-def visiteVirtuelle(request):
+def gallery(request):
     return render(request, "visite_virtuelle.html")
 
 def contactUs(request):

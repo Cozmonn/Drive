@@ -8,7 +8,6 @@ from . import views
 urlpatterns = [
     
     path('home', views.home, name="home"),
-    path('visiteVirtuelle/', views.visiteVirtuelle, name="visiteVirtuelle"),
     path('contactUs/', views.contactUs, name="contactUs"),
     path("signin/", views.logform, name="login"),
     path("signup/", views.register, name="signup"),
@@ -23,6 +22,7 @@ urlpatterns = [
     path('product-list/', views.products_view, name='product-list'),
     path('product-detail/<int:pk>/', views.product_detail, name='product-detail'),
     path('cart/', views.add_to_cart, name='cart'),
+    path('gallery/', views.gallery, name='gallery'),
     path('shopping-cart/', views.cart_items_view, name='shopping-cart'),
     path('apply-coupon/', views.apply_coupon, name="apply-coupon"),
     #path('checkout/', views.create_checkout_session, name="checkoutSession"),
