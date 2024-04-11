@@ -114,11 +114,12 @@ class ProductPricing(models.Model):
 
 
 class Coupon(models.Model):
+    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, null=True, blank=True)
     code = models.CharField(max_length=50, unique=True)
     valid_from = models.DateTimeField()
     valid_to = models.DateTimeField()
     discount = models.IntegerField(help_text="Percentage discount")
-    active = models.BooleanField()
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.code

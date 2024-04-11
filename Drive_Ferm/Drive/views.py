@@ -1124,3 +1124,138 @@ def createcheckoutsession(request):
         return redirect(checkout_session.url, code=303)
     except Exception as e:
         return JsonResponse({'error': str(e)})
+
+
+from django.core.exceptions import ValidationError
+from django.utils.dateparse import parse_date
+@csrf_exempt
+def create_coupon(request):
+    farms = Farm.objects.all()
+    if request.method == 'POST':
+        code = request.POST.get('code')
+        reduction_value = request.POST.get('reduction_value')
+        valid_from = request.POST.get('valid_from')
+        valid_to = request.POST.get('valid_to')
+        farm_id = request.POST.get('farms')
+
+
+        # Convert date strings to date objects
+        try:
+            valid_from = parse_date(valid_from)
+            valid_to = parse_date(valid_to)
+            reduction_value = float(reduction_value)
+            farm = get_object_or_404(Farm, id=farm_id)
+        except ValueError:
+            return HttpResponse("Invalid data", status=400)
+
+        # Create coupon instance
+        coupon = Coupon(
+            code=code,
+            discount=reduction_value,
+            valid_from=valid_from,
+            valid_to=valid_to,
+            farm=farm
+        )
+
+        # Validate and save the coupon
+        try:
+            coupon.full_clean()
+            coupon.save()
+            return redirect('create_coupon')  # Redirect to a new URL
+        except ValidationError as e:
+            # Handle the error and return a response
+            return HttpResponse(e.messages, status=400)
+
+    # If not POST request, or if any error occurs
+    return render(request, 'coupon-code.html', {'farms':farms})
+
+@csrf_exempt
+def coupons_by_farm(request):
+    profile = get_object_or_404(Business, username=request.user.username)
+    farm = profile.farm
+    
+    search_query = request.GET.get('search', '')
+    coupons = Coupon.objects.filter(farm=farm)
+    if search_query:
+        coupons = coupons.filter(code__icontains=search_query)  # Assuming 'code' is a field in your Coupon model
+
+    entries_per_page = request.GET.get('entries', 5)
+    try:
+        entries_per_page = int(entries_per_page)
+    except ValueError:
+        entries_per_page = 5
+
+    paginator = Paginator(coupons, entries_per_page)
+    page = request.GET.get('page')
+
+    try:
+        coupons_page = paginator.page(page)
+    except PageNotAnInteger:
+        coupons_page = paginator.page(1)
+    except EmptyPage:
+        coupons_page = paginator.page(paginator.num_pages)
+
+    coupon_list = []
+    for coupon in coupons_page:
+        coupon_list.append({
+            'code': coupon.code,
+            'reduction_value': coupon.discount,
+            'valid_from': coupon.valid_from,
+            'valid_to': coupon.valid_to,
+            'statue': coupon.active,
+            'id' : coupon.id
+        })
+
+    context = {
+        'coupon_list': coupon_list,
+        'coupons_page': coupons_page,
+        'entries': entries_per_page,
+        'search_query': search_query,
+    }
+
+    return render(request, 'coupon-list.html', context)
+
+@csrf_exempt
+def coupon_update(request, pk):
+    coupon = get_object_or_404(Coupon, pk=pk)
+    if request.method == 'POST':
+        # Retrieve form data
+        code = request.POST.get('code')
+        reduction_value = request.POST.get('reduction_value')
+        valid_from = request.POST.get('valid_from')
+        valid_to = request.POST.get('valid_to')
+
+        try:
+            valid_from = parse_date(valid_from)
+            valid_to = parse_date(valid_to)
+            reduction_value = float(reduction_value)
+        except ValueError:
+            return HttpResponse("Invalid data", status=400)
+
+        # Update coupon instance
+        coupon.code = code
+        coupon.discount = reduction_value
+        coupon.valid_from = valid_from
+        coupon.valid_to = valid_to
+
+        # Validate and save the coupon
+        try:
+            coupon.save()
+            return redirect('coupon-list')  # Redirect to a new URL or list view
+        except Exception as e:  # Consider more specific exception handling
+            return HttpResponse("Error updating coupon: {}".format(e), status=400)
+
+    # Context to pass to the template
+    context = {'coupon': coupon}
+
+    # Render the update template with the current coupon data
+    return render(request, 'coupon-update.html', context)
+
+@csrf_exempt
+def coupon_delete(request, pk):
+    if request.method == 'GET':  # Using GET as per your setup
+        coupon = get_object_or_404(Coupon, pk=pk)
+        coupon.delete()
+        return HttpResponseRedirect(reverse('coupon-list'))  # Redirect after deletion
+    else:
+        return HttpResponse("Method not allowed", status=405)
