@@ -27,10 +27,11 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 def home(request):
     # Get the four most recent products
     newest_products = Product.objects.all()[:4]
-    
+    farms = Farm.objects.all()
     # Pass them to the context
     context = {
         'newest_products': newest_products,
+        'farms':farms
     }
     
     # Render the template
@@ -38,6 +39,43 @@ def home(request):
 
 def gallery(request):
     return render(request, "visite_virtuelle.html")
+
+def clienting(request):
+    search_query = request.GET.get('search', '')
+    orders = Ordering.objects.filter(customer=request.user)  # Get orders for the logged-in user
+
+    if search_query:
+        orders = orders.filter(product__product_name__icontains=search_query)  # Adjust based on your model fields
+
+    entries_per_page = request.GET.get('entries', 10)
+    try:
+        entries_per_page = int(entries_per_page)
+    except ValueError:
+        entries_per_page = 10  # Fallback if conversion fails
+
+    paginator = Paginator(orders, entries_per_page)
+    page = request.GET.get('page')
+
+    try:
+        orders_page = paginator.page(page)
+    except PageNotAnInteger:
+        orders_page = paginator.page(1)
+    except EmptyPage:
+        orders_page = paginator.page(paginator.num_pages)
+
+    context = {
+        'orders': orders_page,
+        'entries': entries_per_page,
+        'search_query': search_query,
+    }
+
+    return render(request, 'client-view.html',context)
+
+def businessing(request):
+    return render(request, 'index-prod.html')
+
+def visite(request):
+    return render(request, 'visite_virtuelle.html')
 
 def contactUs(request):
     return render(request, "contactuS.html")
@@ -79,7 +117,7 @@ from .form import SignInForm, EditProfileForm
 # Create your views here.
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpRequest
-from .models import Cart, CartItem, Coupon, Event, Gallery
+from .models import Cart, CartItem, ContactMessage, Coupon, Event, Gallery, Ordering, UserAuth
 from django.contrib import messages
 
 @csrf_exempt
@@ -122,6 +160,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 
+
 def logform(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -131,11 +170,51 @@ def logform(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'Successfully logged in.')
-            return redirect('UpdateProfile')  # Redirect to a home or another target page
+            
+            def check_missing_fields(user, fields):
+                missing = [field for field, value in fields.items() if not value]
+                if missing:
+                    messages.info(request, f"Please update the missing fields: {', '.join(missing)}.")
+                    return False
+                return True
+
+            if hasattr(user, 'customer'):
+                fields = {
+                    'shipping address': user.customer.shipping_address,
+                    'username': user.username,
+                    'email': user.email,
+                    'first name': user.first_name,
+                    'last name': user.last_name
+                }
+                if not check_missing_fields(user, fields):
+                    return redirect('UpdateProfile')
+                return redirect('client')
+
+            elif hasattr(user, 'business'):
+                fields = {
+                    'location': user.business.location,
+                    'business phone number': user.business.business_phone_number,
+                    'farm': user.business.farm,
+                    'username': user.business.username,
+                    'email': user.business.email,
+
+
+                }
+                if not check_missing_fields(user, fields):
+                    return redirect('Update_Business')
+                return redirect('business')
+
+            return redirect('home')
         else:
             messages.error(request, 'Invalid username or password.')
     
-    return render(request, 'login.html')  # Path to your login template
+    return render(request, 'login.html')
+
+
+
+
+
+
 
 
 from django.contrib.auth.password_validation import validate_password
@@ -188,7 +267,7 @@ def register(request):
                 recipient_list=[email],
                 fail_silently=False,
             )
-        
+            messages.success(request, f"{user_type} account created successfully!")
         return redirect('login')  # Redirect after successful account creation
     
     return render(request, 'signup.html')
@@ -199,36 +278,6 @@ def logoutt(request):
     messages.success(request, ("Logging Out Successfully"))
     return redirect('login')
 
-# def create_checkout_session(request):
-#     # Récupérer les produits du panier de l'utilisateur
-#     cart_items = Cart.objects.all()  # Adapt this according to your actual cart implementation
-    
-#     # Préparer les données pour la session de paiement
-#     line_items = []
-#     for cart_item in cart_items:
-#         product = cart_item.product
-#         line_items.append({
-#             'price_data': {
-#                 'currency': 'usd',
-#                 'product_data': {
-#                     'name': product.name,
-#                     # Ajouter d'autres informations du produit si nécessaire
-#                 },
-#                 'unit_amount': int(product.price * 100),  # Le prix est en cents
-#             },
-#             'quantity': cart_item.quantity,
-#         })
-
-#     # Créer la session de paiement avec Stripe
-#     session = stripe.checkout.Session.create(
-#         payment_method_types=['card'],
-#         line_items=line_items,
-#         mode='payment',
-#         success_url='/success/',
-#         cancel_url='/cancel/',
-#     )
-    
-#     return HttpResponseRedirect(session.url)
 
 
 
@@ -238,6 +287,7 @@ def create_checkout_session(request):
         quantity = int(request.POST.get('directQuantity', 1))
         pricing = get_object_or_404(ProductPricing, id=pricing_id)
         product = pricing.product
+        customer_id = request.user.uuid
         try:
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
@@ -259,7 +309,7 @@ def create_checkout_session(request):
                 mode='payment',
                 success_url=request.build_absolute_uri('/success/'),
                 cancel_url=request.build_absolute_uri('/cancel/'),
-                metadata={'volume': quantity, 'product_id': str(product.id)},
+                metadata={'volume': quantity, 'product_id': str(product.id), 'user_id':str(customer_id)},
             )
             return redirect(checkout_session.url)
         except Exception as e:
@@ -277,101 +327,81 @@ def create_checkout_session(request):
 def pay(request):
     return render(request, 'paiement.html')
 
-# @csrf_exempt
-# def create_checkout_session(request):
 
-#     # Make sure the user has a cart with items in it
-#     try:
-#         cart = Cart.objects.get(user=request.user)
-#         if not cart.items.exists():
-#             return JsonResponse({'error': 'Your cart is empty.'}, status=400)
-#     except Cart.DoesNotExist:
-#         return JsonResponse({'error': 'No active cart found.'}, status=404)
 
+@csrf_exempt
+def Webhooking(request):
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse('Invalid payload', status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse('Invalid signature', status=400)
+
+    # Default response for unspecified events
+    response = HttpResponse('Unhandled event type', status=200)
+
+    # Handle the checkout.session.completed event
+    if event['type'] == 'checkout.session.completed':
+        session = stripe.checkout.Session.retrieve(
+        event['data']['object']['id'],
+        expand=['line_items'],
+        
+        )
+        if session.payment_status  == "paid":
+            line_items = session.get('line_items', {'data': []})
     
-#     roduct = get_object_or_404(Product, product=cart.product)
-#     # Calculate the total price in the backend
-#     total = cart.get_total_price()
-    
-#     # Prepare line items for the payment session
-#     line_items = []
-#     for item in cart.items.all():
-#         line_items.append({
-#             'price_data': {
-#                 'currency': 'usd',
-#                 'product_data': {
-#                     'images': [item["image_url"]],
-#                     'name': item["product_name"],
-#                     'description': item["description"],
-#                 },
-#                 'unit_amount': int(item["price"] * 100),  # Price in cents
-#             },
-#             'quantity': item["quantity"],
-#         })
+            if len(line_items['data']) == 1:
+                # There's only one product in the order
+                return create_order(session)
+            else:
+                # There are multiple products in the order
+                return create_orders_from_stripe_session(session)
+        else:
+            # Handle payment failure or other cases here if needed
+            response = HttpResponse('Payment not successful', status=200)
 
-#     # Create a payment session with Stripe
-#     session = stripe.checkout.Session.create(
-#         payment_method_types=['card'],
-#         line_items=line_items,
-#         mode='payment',
-#         success_url='https://example.com/success',
-#         cancel_url='https://example.com/cancel',
-#     )
-
-#     return HttpResponseRedirect(session.url)
-
-# @csrf_exempt
-# def Webhooking(request):
-#     payload = request.body
-#     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
-#     event = None
-
-#     try:
-#         event = stripe.Webhook.construct_event(
-#             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-#         )
-#     except ValueError as e:
-#         # Invalid payload
-#         return HttpResponse('Invalid payload', status=400)
-#     except stripe.error.SignatureVerificationError as e:
-#         # Invalid signature
-#         return HttpResponse('Invalid signature', status=400)
-
-#     # Default response for unspecified events
-#     response = HttpResponse('Unhandled event type', status=200)
-
-#     # Handle the checkout.session.completed event
-#     if event['type'] == 'checkout.session.completed':
-#         session = stripe.checkout.Session.retrieve(
-#         event['data']['object']['id'],
-#         expand=['line_items'],
-#         )
-#         if session.payment_status  == "paid":
-#             # Assuming `session['metadata']['user_id']` correctly refers to a Client username.
-#             # Adjust this to match your actual data structure and model field names.
-#             pass
-#         else:
-#             # Handle payment failure or other cases here if needed
-#             response = HttpResponse('Payment not successful', status=200)
-
-#     return response
+    return response
 
 
-# def create_order(session):
-#     order = Order.objects.create(
-#         session_id = session['id'],
-#         client = session['metadata']['user_id'],
-#         customer_id=session['customer'],
-#         payment_intent=session['payment_intent'],
-#         payment_status=session['payment_status'],
-#         total_amount=session['amount_total'] / 100,  # Stripe amounts are in cents
-#         currency=session['currency'],
-#         email=session['customer_details']['email'],  # Adjust according to actual session structure
-#         fullname=session['customer_details']['name'],  # Adjust according to actual session structure
-#         phone=session['customer_details']['phone'],  # Adjust according to actual session structure
-#         tax_exempt=session['customer_details']['tax_exempt'],  # Adjust according to actual session structure
-#     )
-#     order.save()
+def create_order(session):
+    # Assuming line_items is expanded and exists in the session data.
+    line_items = session.get('line_items', {'data': []})
+    total_amount = 0
+    for item in line_items['data']:
+        total_amount += item['amount_total']
+
+    try:
+        # Fetch user and other data possibly stored in session metadata if available
+        user_id = session.get('metadata', {}).get('user_id')
+        volume = session.get('metadata', {}).get('volume')
+        product_id = session.get('metadata', {}).get('product_id')
+        client = UserAuth.objects.get(uuid=user_id)  # Adjust this based on how you identify users
+        product = get_object_or_404(Product, id=product_id)
+        order = Ordering.objects.create(
+            session_id=session['id'],
+            customer=client,
+            product = product,
+            payment_intent=session['payment_intent'],
+            payment_status=session['payment_status'],
+            total_price=total_amount / 100,  # Assuming amount_total is in cents
+            currency=session['currency'],
+            quantity = volume,
+        )
+        
+        order.save()
+        return order
+    except Exception as e:
+        print(f"Failed to create order: {e}")
+        # Handle exceptions or log errors as needed
 
 
 
@@ -436,21 +466,36 @@ def update_user_information(request):
 
     return render(request, 'Cupdate.html', {'profile': profile, 'profile_picture_url': profile_picture_url})
 
-
+@csrf_exempt
 def update_business(request):
     profile = Business.objects.get(username=request.user.username)
+    farms = Farm.objects.all()
+    farm = profile.farm
     profile_picture_url = request.build_absolute_uri(profile.profile_image.url) if profile.profile_image else None  # Construct absolute URL
     if request.method == 'POST':
         # Extract form data
         business_name = request.POST.get('Business_name')
         location = request.POST.get('Location')
         email = request.POST.get('email')
+        selected_farm = request.POST.get('farm')
+        new_farm_name = request.POST.get('FarmName')
+        business_phone_number = request.POST.get('phone-number')
         old_password = request.POST.get('old_password')
         new_password1 = request.POST.get('new_password1')
         new_password2 = request.POST.get('new_password2')
 
         # Retrieve the current business profile
-        business = Business.objects.get(user=request.user)
+        business = Business.objects.get(username=request.user.username)
+
+        if selected_farm == "create_new" and new_farm_name:
+            # Create new farm and link to this business
+            new_farm = Farm.objects.create(name=new_farm_name)
+            business.farm = new_farm
+        elif selected_farm and selected_farm.isdigit():
+            # Link existing farm
+            business.farm = Farm.objects.get(id=int(selected_farm))
+
+
 
                # Handle profile picture upload
         if 'photo' in request.FILES:
@@ -481,47 +526,48 @@ def update_business(request):
             else:
                 messages.error(request, "Old password is incorrect.")
                 return redirect('update_business')
-
         # Save changes
         business.save()
 
         messages.success(request, "Business information updated successfully.")
         return redirect('profile')  # Redirect to profile or any other relevant page
 
-    return render(request, 'settings.html', {'profile': profile, 'profile_picture_url': profile_picture_url})  # Replace 'update_business.html' with your template path
+    return render(request, 'settings.html', {'profile': profile, 'profile_picture_url': profile_picture_url, 'farms': farms, 'farm': farm})  # Replace 'update_business.html' with your template path
 
 @csrf_exempt
 def update_farm(request):
-
     profile = get_object_or_404(Business, username=request.user.username)
     farm = profile.farm
     profile_picture_url = request.build_absolute_uri(farm.gallery.url) if farm.gallery else None
 
     if request.method == 'POST':
-        farm.name = request.POST.get('name')
-        farm.description = request.POST.get('description')
-        farm.founded_date = request.POST.get('founded_date')
-        farm.founders = request.POST.get('founders')
-        farm.location = request.POST.get('location')
-        farm.number_of_employees = int(request.POST.get('number_of_employees'))
-        farm.email = request.POST.get('email')
-        farm.phonen = request.POST.get('phonen')
+        try:
+            # Updating farm information from form data
+            farm.name = request.POST.get('name')
+            farm.description = request.POST.get('description')
+            farm.founded_date = request.POST.get('founded_date')
+            farm.founders = request.POST.get('founders')
+            farm.location = request.POST.get('location')
+            farm.number_of_employees = int(request.POST.get('number_of_employees'))
+            farm.email = request.POST.get('email')
+            farm.phonen = request.POST.get('phonen')
 
-               # Handle profile picture upload
-        if 'gallery' in request.FILES:
-            photo = request.FILES['gallery']
-            # Delete old image if it exists
-            if farm.gallery:
-                farm.gallery.delete(save=False)  # Deletes the file and not the model instance
-            
-            # Save new image
-            farm.gallery.save(photo.name, photo, save=False)
+            # Handle profile picture upload
+            if 'gallery' in request.FILES:
+                photo = request.FILES['gallery']
+                # Delete old image if it exists
+                if farm.gallery:
+                    farm.gallery.delete(save=False)
+                # Save new image
+                farm.gallery.save(photo.name, photo, save=False)
 
-        farm.save()
-        messages.success(request, 'Farm updated successfully!')
-        return redirect('profile')  # Redirect to a farm detail view or similar
+            farm.save()
+            messages.success(request, 'Farm updated successfully!')
+            return redirect('profile')  # Redirect to a farm detail view or similar
+        except Exception as e:
+            messages.error(request, f'Error updating farm: {str(e)}')
+            return render(request, 'farm-update.html', {'farm': farm, 'profile_picture_url': profile_picture_url})
 
-    # Render the farm update form with farm instance
     return render(request, 'farm-update.html', {'farm': farm, 'profile_picture_url': profile_picture_url})
 
 
@@ -1077,7 +1123,10 @@ def createcheckoutsession(request):
     cart_items = CartItem.objects.filter(cart__user=request.user)
     stripe_items = []
     print(stripe_items)
-
+    product_metadata = {}
+    customer_info = {
+    'user_id': str(request.user.uuid)}
+    product_metadata.update(customer_info)
     # Check if a discount code is provided
     discount_code = request.POST.get('coupon-code', None)
     discount = None
@@ -1108,9 +1157,14 @@ def createcheckoutsession(request):
                 },
                 'unit_amount': int(unit_amount * 100),  # Convert to cents
             },
+            
             'quantity': item.quantity,
+            
         }
         stripe_items.append(stripe_item)
+                # Add product ID and volume to metadata
+        product_metadata[f'product_id_{product.id}'] = str(product.id)
+        product_metadata[f'volume_{product.id}'] = str(item.volume)
 
     # Create the Stripe checkout session
     try:
@@ -1118,12 +1172,74 @@ def createcheckoutsession(request):
             payment_method_types=['card'],
             line_items=stripe_items,
             mode='payment',
+            metadata=product_metadata,
             success_url=request.build_absolute_uri('/success/'),  # Provide your success URL
             cancel_url=request.build_absolute_uri('/cancel/'),  # Provide your cancel URL
         )
         return redirect(checkout_session.url, code=303)
     except Exception as e:
         return JsonResponse({'error': str(e)})
+    
+from django.core.exceptions import ObjectDoesNotExist
+
+def parse_metadata_for_products(metadata):
+    # This function extracts product IDs and their corresponding volumes from metadata
+    product_ids = {}
+    volumes = {}
+    
+    for key, value in metadata.items():
+        if key.startswith('product_id_'):
+            product_num = key.split('_')[2]  # Extracts the number part of 'product_id_X'
+            product_ids[product_num] = value  # value is the actual product ID
+        elif key.startswith('volume_'):
+            volume_num = key.split('_')[1]  # Extracts the number part of 'volume_X'
+            volumes[volume_num] = value
+    
+    return product_ids, volumes
+
+def create_orders_from_stripe_session(session):
+    
+    line_items = session.get('line_items', {'data': []})
+    total_amount = 0
+    for item in line_items['data']:
+        total_amount += item['amount_total']
+
+
+    metadata = session.get('metadata', {})
+    user_id = metadata.get('user_id')
+    product_ids, volumes = parse_metadata_for_products(metadata)
+
+    try:
+        customer = UserAuth.objects.get(uuid=user_id)
+    except UserAuth.DoesNotExist:
+        return JsonResponse({'error': 'User does not exist'}, status=404)
+
+    orders = []
+    # Iterate through product_ids parsed from metadata
+    for num, product_id in product_ids.items():
+        volume = volumes.get(num, 1)  # Default volume to 1 if not specified
+        try:
+            product = Product.objects.get(id=product_id)
+            order = Ordering.objects.create(
+                session_id=session['id'],
+                customer=customer,
+                product=product,
+                quantity=volume,  # Convert volume to an integer if necessary, handle exceptions as needed
+                payment_intent=session['payment_intent'],
+                payment_status=session['payment_status'],
+                total_price=total_amount / 100,  # Assuming amount_total is in cents
+                currency=session['currency'],
+            )
+            orders.append(order)
+        except Product.DoesNotExist:
+            continue  # Skip if product does not exist
+
+    return orders
+
+
+
+
+
 
 
 from django.core.exceptions import ValidationError
@@ -1259,3 +1375,39 @@ def coupon_delete(request, pk):
         return HttpResponseRedirect(reverse('coupon-list'))  # Redirect after deletion
     else:
         return HttpResponse("Method not allowed", status=405)
+    
+
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('text')
+        print(name,email,message)
+        if name and email and message:  # Simple validation
+            # Save to database
+            contact_message = ContactMessage(full_name=name, email=email, comments=message)
+            contact_message.save()
+            # Send email
+            send_mail(
+                subject=f"New Contact from {name}",
+                message=message,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[email],  # Replace with your email
+                fail_silently=False,
+            )
+            message = 'success'
+        else:
+            message = 'fail'
+
+    return render(request, 'contactus.html', {'message': message})
+
+
+
+def delete_from_cart(request, item_id):
+    # Get the cart item or 404 if not found
+    cart_item = get_object_or_404(CartItem, id=item_id)  # Ensure only the owner can delete it
+    print(cart_item)
+    # Check if the request method is POST for safety
+    cart_item.delete()
+        # If not POST, redirect to cart page or send a bad request response
+    return redirect('shopping-cart')

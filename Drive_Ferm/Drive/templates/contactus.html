@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Document</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&family=Montserrat:wght@200;300;400&family=Playfair+Display:wght@400;500;600;700&display=swap');
@@ -229,6 +230,27 @@ body {
     </style>
 </head>
 <body>
+  {% if message %}
+  <script>
+      window.onload = function() {
+          if ("{{ message }}" == "success") {
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Thank you!',
+                  text: 'Thank you for contacting us!',
+                  confirmButtonText: 'OK'
+              });
+          } else if ("{{ message }}" == "fail") {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Please fill all fields in the form.',
+                  confirmButtonText: 'OK'
+              });
+          }
+      }
+  </script>
+  {% endif %}
     <div class="container-sm">
         <div class="contact-page">
             <div class="form-box">
@@ -237,7 +259,8 @@ body {
                   <h2 class="form-title">Contactez-nous</h2>
                 </div>
                 
-                <form action="#" method="POST">
+                <form action="{% url 'contact' %}" method="POST">
+                  {% csrf_token %}
                   <div class="lightcolor form-info">N'hésitez pas à nous contacter, nous vous répondrons dans les plus brefs délais.</div>
                   <div class="input-box">
                       <input type="text" name="name" class="highliterbox" autocomplete="off" required>
@@ -256,6 +279,7 @@ body {
                   </div>
                   <input class="btn" type="submit" value="Envoyer">
                 </form>
+                
                 <span class="line"></span>
             </div>
 

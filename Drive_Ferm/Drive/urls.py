@@ -8,10 +8,14 @@ from . import views
 urlpatterns = [
     
     path('home', views.home, name="home"),
+    path('visiteV/', views.visite, name="visite"),
+    path('clientview/', views.clienting, name="client"),
+    path('businessview/', views.businessing, name="business"),
     path('contactUs/', views.contactUs, name="contactUs"),
     path("signin/", views.logform, name="login"),
     path("signup/", views.register, name="signup"),
     path("loout/", views.logoutt, name="logout"),
+    path('contact/', views.contact, name='contact'),
     path("eventing/", views.eventupload, name="Gallery"),
     path('pay/', views.pay, name="pay"),
     path('chack/', views.dashboard_view, name="chack"),
@@ -19,7 +23,7 @@ urlpatterns = [
     path('ProductbyFarm/', views.products_by_farm, name="PFarm"),
     path('AddProduct/', views.add_product, name="Nproduct"),
     path('UpdateProduct/<int:pk>/', views.edit_product, name="Eproduct"),
-    path('product-list/', views.products_view, name='product-list'),
+    path('product-list/', views.products_view, name='productlist'),
     path('product-detail/<int:pk>/', views.product_detail, name='product-detail'),
     path('cart/', views.add_to_cart, name='cart'),
     path('gallery/', views.gallery, name='gallery'),
@@ -38,6 +42,8 @@ urlpatterns = [
     path('change-farn/', views.update_farm, name='change-farn'),
     path('checkout/', views.create_checkout_session, name='checkout'),
     path('createcheckoutsession/', views.createcheckoutsession, name='createcheckoutsession'),
+    path('Webhooking/', views.Webhooking, name='Webhooking'),
+    path('cart_delete/<int:item_id>/', views.delete_from_cart, name='delete_from_cart'),
     path('shopping-cart/bulk-update-cart-items/', views.bulk_update_cart_items, name='bulk-update-cart-items'),
     # path('cancel/', views.cancel, name='cancel'),
 

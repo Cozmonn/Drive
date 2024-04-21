@@ -22,8 +22,18 @@
     </style>
 </head>
 <body>
-
-
+  {% if messages %}
+  {% for message in messages %}
+  <script>
+    swal("Error", "{{message}}", "error");                   
+  </script>
+  {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+  <script>
+    swal("success", "{{message}}", "success");                   
+  </script>
+   {% endif %}
+  {% endfor%}
+{% endif%}
 <div class="main">
     <div class="container d-flex justify-content-center align-items-center vh-100 ">
         <div class="d-flex justify-content-center align-items-center order-last d-none d-sm-none d-md-block wop rounded ">
@@ -32,51 +42,46 @@
         </div>
 
         <div class="d-flex justify-content-center align-items-center order-first pow rounded">
-            <form method="POST" style="width: 70%;">
-              {%csrf_token%}
-              <div class="form-group">
-                <h2>
-                  <a class="navbar-brand" href=""><img src="../static/background/location.png" alt="">
-                    <img src="../../static/logo-white.svg" alt="" width="50%">
-                  </a>
-                </h2>
+          <form method="POST" style="width: 70%;" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+              <h2>
+                <a class="navbar-brand" href="#">
+                  <img src="../static/background/location.png" alt="">
+                  <img src="../../static/Logo.png" alt="" width="50%">
+                </a>
+              </h2>
+            </div>
+            <br>
+            <div class="form-group">
+              <label for="InputUsername1">Username</label>
+              <input type="text" name="username" class="form-control" id="InputUsername1" placeholder="Enter Username" required>
+              <div class="invalid-feedback">
+                Please enter your username.
               </div>
-              <br>
-              <div class="form-group px-5">
-                <!-- {% if messages %}
-                  {% for message in messages %}
-                  <script>
-                    swal("Error", "{{message}}", "error");                   
-                  </script>
-                  {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                  <script>
-                    swal("success", "{{message}}", "success");                   
-                  </script>
-                   {% endif %}
-                  {% endfor%}
-                {% endif%} -->
-              </div>
-              <br>
-              <div class="form-group">
-                <label for="InputEmail1">username</label>
-                <input type="text" name="username" class="form-control" id="InputEmail1" aria-describedby="emailHelp" placeholder="Enter Username" required>
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-              </div>
-              <div class="form-group">
-                <label for="InputPassword1">Password</label>
-                <div class="input-group mb-3">
-                  <input type="text" class="form-control" id="passwordInput" placeholder="Password" aria-label="Recipient's username" aria-describedby="button-addon2" name="password" required>
-                  <button class="btn btn-outline-success" type="button" id="button-addon2" onclick="togglePasswordVisibility()"><i class="bi bi-eye-slash" id="togglePasswordIcon"></i></button>
+              <small id="usernameHelp" class="form-text text-muted">We'll never share your username with anyone else.</small>
+            </div>
+            <div class="form-group">
+              <label for="InputPassword1">Password</label>
+              <div class="input-group mb-3">
+                <input type="password" class="form-control" id="InputPassword1" placeholder="Password" name="password" required>
+                <div class="input-group-append">
+                  <button class="btn btn-outline-success" type="button" id="button-addon2" onclick="togglePasswordVisibility()">
+                    <i class="bi bi-eye-slash" id="togglePasswordIcon"></i>
+                  </button>
+                </div>
+                <div class="invalid-feedback">
+                  Please enter your password.
                 </div>
               </div>
-              <br>
-              <div class="form-group d-flex">
-                <a href="{% url 'signup' %}" class="text-success" style="text-decoration: none;">Still don't have an account ?</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="login.html" class="text-success" style="text-decoration: none;">Forgot Your Password ?</a>
-              </div>
-              <br>
-              <button type="submit" class="btn btn-outline-success">Submit</button>
-            </form>
+            </div>
+            <br>
+            <div class="form-group d-flex justify-content-between">
+              <a href="{% url 'signup' %}" class="text-success" style="text-decoration: none;">Still don't have an account?</a>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-outline-success">Submit</button>
+          </form>          
         </div>
     </div>
 </div>

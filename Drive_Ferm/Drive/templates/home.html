@@ -100,7 +100,7 @@
                 <!-- Navbar items alignés à gauche -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Contact Us</a>
+                        <a class="nav-link active" aria-current="page" href="{% url 'contactUs' %}">Contact Us</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'gallery' %}">Gallery</a>
@@ -113,7 +113,7 @@
                             {% for product in newest_products %}
                             <li><a class="dropdown-item" href="#">{{ product.product_name }}</a></li>
                             {% endfor %}
-                            <li><a class="dropdown-item" href="#">Check More ...</a></li>
+                            <li><a class="dropdown-item" href="{% url 'productlist' %}">Check More ...</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -121,28 +121,31 @@
                             Our farms
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Farm1</a></li>
-                            <li><a class="dropdown-item" href="#">Farm2</a></li>
-                            <li><a class="dropdown-item" href="#">Farm3</a></li>
+                            {% for farm in farms %}
+                            <li><a class="dropdown-item" href="#">{{farm.name}}</a></li>
+                            {% endfor %}
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link" href="#" role="button">
+                        <a class="nav-link" href="{% url 'visite' %}" role="button">
                             virtual visit
                         </a>
                     </li>
                 </ul>
                 <!-- Navbar items alignés à droite -->
+                {% if request.user.is_authenticated %}
+                {% else %}
                 <ul class="navbar-nav ms-auto">
                     <div class="d-flex align-items-center">
-                        <a href="https://github.com/your-username/your-repo" class="btn btn-outline-dark me-2 d-flex align-items-center">
+                        <a href="{% url 'signup' %}" class="btn btn-outline-dark me-2 d-flex align-items-center">
                             <i class="fa-solid fa-user-plus"></i>&nbsp;&nbsp; Sign Up
                         </a>
-                        <a href="https://github.com/sponsors/your-username" class="btn btn-outline-success d-flex align-items-center">
+                        <a href="{% url 'login' %}" class="btn btn-outline-success d-flex align-items-center">
                             <i class="fa-solid fa-arrow-right-to-bracket"></i>&nbsp;&nbsp; Login
                         </a>
                     </div>
                 </ul>
+                {% endif %}
             </div>
         </div>
     </nav>

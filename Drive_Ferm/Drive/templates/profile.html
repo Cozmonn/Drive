@@ -158,8 +158,8 @@
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                 <!-- <a href="./profile.html" class="dropdown-item">Profile</a>
                 <div class="dropdown-divider"></div> -->
-                <a href="./settings.html" class="dropdown-item">Settings</a>
-                <a href="./sign-in.html" class="dropdown-item">Logout</a>
+                <a href="{% url 'Update_Business' %}" class="dropdown-item">Settings</a>
+                <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
               </div>
             </div>
           </div>
@@ -244,9 +244,12 @@
                     <svg xmlns="www.w3.org/2000/svg" class="icon icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" /><path d="M3 7l9 6l9 -6" /></svg>
                     <a href="#" class="text-reset">contact@fermedeslumieres.com</a>
                   </div>
+                  {% if is_member %}
                   <div class="list-inline-item">
                     <a href="{% url 'change-farn' %}" class="text-secondary" ><i class="fas fa-edit"></i></a>
                   </div>
+                  {% else %}
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -281,6 +284,7 @@
                             {% endfor %}
                           {% endif %}
                         </div>
+                        {% if is_member %}
                         <div class="col-auto pt-2">
                           <a href="{% url 'change' event.id %}" class="btn">
                             <i class="fas fa-edit"></i>
@@ -289,6 +293,8 @@
                             <i class="fa-regular fa-trash-can"></i>
                           </button>
                         </div>
+                        {% else %}
+                        {% endif %}
                       </div>
                     </div>
                   </li>
@@ -349,16 +355,19 @@
                         </div>
                       </div>
                     </div>
-                  <div class="col-12">
-                    <div class="card">
-                      <div class="card-body">
-                        <h2 class="card-title">Actions :</h2>
-                        <div class="btn-list justify-content-center">
-                          <a class="btn">Ajouter un event!</a>
+                    {% if is_member %}
+                    <div class="col-12">
+                      <div class="card">
+                        <div class="card-body">
+                          <h2 class="card-title">Actions :</h2>
+                          <div class="btn-list justify-content-center">
+                            <a class="btn">Ajouter un event!</a>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                    {% else %}
+                    {% endif %}
                 </div>
               </div>
             </div>
@@ -388,6 +397,14 @@
               });
           }
       }
+      function validateInput(element) {
+              const errorElement = document.getElementById(element.id + 'Error');
+              if (element.value.trim() === '') {
+                  errorElement.classList.remove('hidden');
+              } else {
+                  errorElement.classList.add('hidden');
+              }
+          }
       </script>
   </body>
 </html>

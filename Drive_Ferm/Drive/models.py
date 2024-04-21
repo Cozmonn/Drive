@@ -55,10 +55,10 @@ class Farm(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField()
     gallery = models.ImageField(upload_to='profile_images/', null=True, blank=True)
-    founded_date = models.DateField(verbose_name="Date Founded")
+    founded_date = models.DateField(verbose_name="Date Founded", null=True, blank=True)
     founders = models.CharField(max_length=255, help_text="Comma-separated list of founders' names")
     location = models.CharField(max_length=255, help_text="Location of the farm")
-    number_of_employees = models.IntegerField(verbose_name="Number of Employees", help_text="How many people work at the farm")
+    number_of_employees = models.IntegerField(verbose_name="Number of Employees", help_text="How many people work at the farm", null=True, blank=True)
     email = models.CharField(max_length=255, null=True, blank=True)
     phonen = models.CharField(max_length=255, null=True, blank=True)
 
@@ -128,20 +128,33 @@ class Coupon(models.Model):
         now = timezone.now()
         return self.active and (self.valid_from <= now <= self.valid_to)
 
-# class Order(models.Model):
-#     # Specify related names for easier reverse lookups
-#     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='orders')
-#     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='orders')
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orders')
+class Ordering(models.Model):
+    # Existing relationships
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='customer_orders',)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='product_orders')
 
-#     quantity = models.PositiveIntegerField()
-#     price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-#     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Total price field
-#     order_date = models.DateTimeField(auto_now_add=True)
-#     order_status = models.CharField(max_length=50, default='Pending')
+    # Existing fields
+    quantity = models.CharField(max_length=100)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)  # Total might be redundant if you calculate it
 
-#     def __str__(self):
-#         return f"Order {self.pk} - {self.customer} - {self.product}"
+    # Additional fields related to the payment session
+    session_id = models.CharField(max_length=100)  # Stripe session ID
+    payment_intent = models.CharField(max_length=100)  # Stripe payment intent ID
+    payment_status = models.CharField(max_length=50, default='Pending')  # Payment status from Stripe
+
+    # Additional transaction details
+    currency = models.CharField(max_length=10)  # Currency of the transaction
+
+    # Metadata
+    order_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Order {self.id} by {self.customer}"
+
+    def save(self, *args, **kwargs):
+        if not self.total_price:
+            self.total_price = self.quantity * self.price_at_purchase
+        super(Ordering, self).save(*args, **kwargs)
 
     
 class Review(models.Model):
@@ -230,3 +243,13 @@ class CartItem(models.Model):
     
     def __str__(self):
         return f"Cart of {self.product}"
+
+
+class ContactMessage(models.Model):
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    comments = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.email}"

@@ -1,6 +1,6 @@
 
 from django.contrib.auth.admin import UserAdmin
-from .models import CartItem, Coupon, Event, Farm, Gallery, PageVisit, UserAuth, WebContent
+from .models import CartItem, ContactMessage, Coupon, Event, Farm, Gallery, Ordering, PageVisit, UserAuth, WebContent
 # Register your models here.
 from django.contrib import admin
 from .models import Business, Customer, ProductPricing, UserAuth, Product, Cart, Review
@@ -19,8 +19,9 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Farm)
+admin.site.register(ContactMessage)
 admin.site.register(Event)
-# admin.site.register(Order)
+admin.site.register(Ordering)
 admin.site.register(Cart)
 admin.site.register(CartItem)
 admin.site.register(Coupon)

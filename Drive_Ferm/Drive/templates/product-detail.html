@@ -57,17 +57,8 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#!">All Products</a></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" href="#!">Popular Items</a></li>
-                                <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
-                            </ul>
-                        </li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'contactUs' %}">Contact us</a></li>
                     </ul>
                     <form class="d-flex">
                         <button class="btn btn-outline-dark" type="submit">
@@ -114,6 +105,7 @@
                                     </select>
                                     <div class="d-flex pt-4">
                                         <input class="form-control text-center me-2" id="inputQuantity" name="directQuantity" type="number" value="1" style="max-width: 3rem" />
+                                        {% if request.user.is_authenticated %}
                                         <button class="btn btn-outline-danger flex-shrink-0 me-2" type="submit">
                                             <i class="bi bi-bag me-1"></i>
                                             Buy Me
@@ -122,6 +114,9 @@
                                             <i class="bi bi-cart-plus"></i>
                                             Add To Cart
                                         </a>
+                                        {% else %}
+                                            <!-- Optionally, you can put something else here or leave it blank -->
+                                        {% endif %}
                                     </div>
                                 </div>
                             </form>

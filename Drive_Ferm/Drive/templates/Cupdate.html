@@ -19,6 +19,8 @@
     <link href="../../static/dist/css/tabler-payments.min.css?1684106062" rel="stylesheet"/>
     <link href="../../static/dist/css/tabler-vendors.min.css?1684106062" rel="stylesheet"/>
     <link href="../../static/dist/css/demo.min.css?1684106062" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
     <style>
       @import url('https://rsms.me/inter/inter.css');
       :root {
@@ -30,6 +32,18 @@
     </style>
   </head>
   <body >
+    {% if messages %}
+    {% for message in messages %}
+    <script>
+      swal("Error", "{{message}}", "error");                   
+    </script>
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+    <script>
+      swal("success", "{{message}}", "success");                   
+    </script>
+     {% endif %}
+    {% endfor%}
+  {% endif%}
     <script src="../../static/dist/js/demo-theme.min.js?1684106062"></script>
     <div class="page">
       <!-- Navbar -->
@@ -39,7 +53,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-            <a href=".">
+            <a href="{% url 'home' %}">
               <img src="../../static/Logo.png" width="110" height="32" alt="Tabler" class="navbar-brand-image">
             </a>
           </h1>
@@ -151,8 +165,8 @@
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                 <!-- <a href="./profile.html" class="dropdown-item">Profile</a>
                 <div class="dropdown-divider"></div> -->
-                <a href="./settings.html" class="dropdown-item">Settings</a>
-                <a href="./sign-in.html" class="dropdown-item">Logout</a>
+                <a href="{% url 'UpdateProfile' %}" class="dropdown-item">Settings</a>
+                <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
               </div>
             </div>
           </div>
@@ -164,7 +178,7 @@
             <div class="container-xl">
               <ul class="navbar-nav">
                 <li class="nav-item">
-                  <a class="nav-link" href="./" >
+                  <a class="nav-link" href="{% url 'business' %}" >
                     <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
                     </span>
@@ -174,7 +188,7 @@
                   </a>
                 </li>
                 <li class="nav-item dropdown">
-                  <a class="nav-link" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                  <a class="nav-link" href="{% url 'productlist' %}" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
                     <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/package -->
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /><path d="M16 5.25l-8 4.5" /></svg>
                     </span>
@@ -184,7 +198,7 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="./form-elements.html" >
+                  <a class="nav-link" href="{% url 'feedback' %}" >
                     <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11l3 3l8 -8" /><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" /></svg>
                     </span>
@@ -194,7 +208,7 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./form-elements.html" >
+                    <a class="nav-link" href="{% url 'profile' %}" >
                       <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
                         <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-fence"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 12v4h16v-4z" /><path d="M6 16v4h4v-4m0 -4v-6l-2 -2l-2 2v6" /><path d="M14 16v4h4v-4m0 -4v-6l-2 -2l-2 2v6" /></svg>                    </span>
                       <span class="nav-link-title">
@@ -240,11 +254,11 @@
                   <div class="card-body">
                     <h4 class="subheader">Business settings</h4>
                     <div class="list-group list-group-transparent">
-                      <a href="./settings.html" class="list-group-item list-group-item-action d-flex align-items-center active">My Account</a>
+                      <a href="{% url 'UpdateProfile' %}" class="list-group-item list-group-item-action d-flex align-items-center active">My Account</a>
                     </div>
                     <h4 class="subheader mt-4">Experience</h4>
                     <div class="list-group list-group-transparent">
-                      <a href="#" class="list-group-item list-group-item-action">Give Feedback</a>
+                      <a href="{% url 'feedback' %}" class="list-group-item list-group-item-action">Give Feedback</a>
                     </div>
                   </div>
                 </div>
@@ -269,19 +283,19 @@
                             <div class="row g-3">
                             <div class="col-md">
                                 <div class="form-label">First Name</div>
-                                <input type="text" class="form-control" value="{{ profile.first_name }}" name="First_Name">
+                                <input type="text" class="form-control" value="{{ profile.first_name }}" name="First_Name" oninput="validateInput(this)" required>
                             </div>
                             <div class="col-md">
                                 <div class="form-label">Last Name</div>
-                                <input type="text" class="form-control" value="{{ profile.last_name }}" name="Last_Name">
+                                <input type="text" class="form-control" value="{{ profile.last_name }}" name="Last_Name" oninput="validateInput(this)" required>
                             </div>
                             <div class="col-md">
                                 <div class="form-label">Username</div>
-                                <input type="text" class="form-control" value="{{ profile.username }}" name="Username">
+                                <input type="text" class="form-control" value="{{ profile.username }}" name="Username" oninput="validateInput(this)" required>
                             </div>
                             <div class="col-md">
                                 <div class="form-label">Shipping Adress</div>
-                                <input type="text" class="form-control" value="{{ profile.Shipping_adress }}" name="Shipping_adress">
+                                <input type="text" class="form-control" value="{{ profile.shipping_address }}" name="Shipping_adress" oninput="validateInput(this)" required>
                             </div>
                             </div>
                             <h3 class="card-title mt-4">Email</h3>
@@ -289,7 +303,7 @@
                             <div>
                             <div class="row g-2">
                                 <div class="col-auto">
-                                <input type="text" class="form-control w-auto" value="{{ profile.email }}" name="email">
+                                <input type="email" class="form-control w-auto" value="{{ profile.email }}" name="email" oninput="validateInput(this)" required>
                                 </div>
                             </div>
                             </div>
@@ -319,9 +333,7 @@
                             <a href="#" class="btn">
                                 Cancel
                             </a>
-                            <input href="#" class="btn btn-primary" type="Submit">
-                                Submit
-                            </input>
+                            <input class="btn btn-primary" type="Submit" />
                             </div>
                         </div>
                     </form>
@@ -340,5 +352,15 @@
             document.getElementById('photo').click();
         });
     </script>
+        <script>
+          function validateInput(element) {
+              const errorElement = document.getElementById(element.id + 'Error');
+              if (element.value.trim() === '') {
+                  errorElement.classList.remove('hidden');
+              } else {
+                  errorElement.classList.add('hidden');
+              }
+          }
+      </script>
     </body>
 </html>

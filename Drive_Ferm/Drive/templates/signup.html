@@ -35,36 +35,51 @@
             </div>
         </div>
         <div class="d-flex justify-content-center align-items-center order-last pow rounded">
-            <form method="post" class="ps-5 pe-5">
-              {% csrf_token %}
-              <div class="form-group" class="ps-5 pe-5">
-                <h2>
-                  <a class="navbar-brand" href=""><img src="../static/background/location.png" alt="">
-                    <img src="../../static/logosvg.svg" alt="" width="50%">
-                  </a>
-                </h2>
+          <form method="post" class="ps-5 pe-5 needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+              <h2>
+                <a class="navbar-brand" href="#">
+                  <img src="../static/background/location.png" alt="">
+                  <img src="../../static/logosvg.svg" alt="" width="50%">
+                </a>
+              </h2>
+            </div>
+            <br><br>
+            <div class="form-group ps-5 pe-5">
+              <label for="InputFname">First name</label>
+              <input type="text" class="form-control" id="InputFname" placeholder="First name" name="First_name" required>
+              <div class="invalid-feedback">
+                Please provide a first name.
               </div>
-              <br><br>
-              <div class="form-group ps-5 pe-5">
-                <label for="InputFname">First name</label>
-                <input type="text" aria-label="First name" class="form-control" placeholder="First name" name="First_name" required>
+            </div>
+            <div class="form-group ps-5 pe-5">
+              <label for="InputLname">Last name</label>
+              <input type="text" class="form-control" id="InputLname" placeholder="Last name" name="Last_name" required>
+              <div class="invalid-feedback">
+                Please provide a last name.
               </div>
-              <div class="form-group ps-5 pe-5">
-                <label for="InputLname">Last name</label>
-                <input type="text" aria-label="Last name" class="form-control" placeholder="Last name" name="Last_name" required>
+            </div>
+            <div class="form-group ps-5 pe-5">
+              <label for="InputEmail1">Email address</label>
+              <input type="email" class="form-control" id="InputEmail1" placeholder="Enter email" name="email" required>
+              <div class="invalid-feedback">
+                Please enter a valid email address.
               </div>
-                <div class="form-group ps-5 pe-5">
-                  <label for="InputEmail1">Email address</label>
-                  <input type="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp" placeholder="Enter email" name="email" required>
-                  <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                </div>
-                <div class="form-group ps-5 pe-5">
-                  <label for="InputPassword1">Password</label> &nbsp;<i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" title="Password must be at least 8 characters, not too similar to personal info, not common or entirely numeric."></i>
-                  <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="passwordInput" placeholder="Password" aria-label="Recipient's username" aria-describedby="button-addon2"  name="password" required>
-                    <button class="btn btn-outline-success" type="button" id="button-addon2" onclick="togglePasswordVisibility()"><i class="bi bi-eye-slash" id="togglePasswordIcon"></i></button>
-                  </div>
-                </div>
+              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+            <div class="form-group ps-5 pe-5">
+              <label for="InputPassword1">Password</label>
+              <div class="input-group mb-3">
+                <input type="password" class="form-control" id="InputPassword1" placeholder="Password" name="password" required>
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="togglePasswordVisibility()">
+                  <i class="bi bi-eye-slash" id="togglePasswordIcon"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback">
+                Please provide a password.
+              </div>
+            </div>
                 <div class="form-group ps-5 pe-5 pt-1">
                   <div class="form-check">
                     <input class="form-check-input" type="radio" name="user_type" id="flexRadioDefault1" value="Business">
@@ -81,7 +96,7 @@
                 </div>
                 <br>
                 <div class="form-group ps-2 pe-5 pb-2">
-                  <a href="login.html" class="text-success" style="text-decoration: none;">Already have an account ?</a>&nbsp;&nbsp;
+                  <a href="{% url 'login' %}" class="text-success" style="text-decoration: none;">Already have an account?</a>
                 </div>
                 <button type="submit" class="btn btn-outline-success">Submit</button>
               </form>
@@ -115,5 +130,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
   </script>
+  <script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+      'use strict'
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.querySelectorAll('.needs-validation')
+    
+      // Loop over them and prevent submission
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+    
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })()
+    </script>
+    
 </body>
 </html>

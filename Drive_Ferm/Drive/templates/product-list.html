@@ -63,7 +63,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-            <a href=".">
+            <a href="{% url 'home' %}">
               <img src="../../static/Logo.png" width="110" height="32" alt="Tabler" class="navbar-brand-image">
             </a>
           </h1>
@@ -173,8 +173,8 @@
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                 <!-- <a href="./profile.html" class="dropdown-item">Profile</a>
                 <div class="dropdown-divider"></div> -->
-                <a href="./settings.html" class="dropdown-item">Settings</a>
-                <a href="./sign-in.html" class="dropdown-item">Logout</a>
+                <a href="{% url 'UpdateProfile' %}" class="dropdown-item">Settings</a>
+                <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
               </div>
             </div>
           </div>
